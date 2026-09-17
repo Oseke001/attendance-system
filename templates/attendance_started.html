@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Started — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 600px; text-align: center;">
+
+        <div class="header-banner" style="text-align: left;">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <h1>Attendance Session Active</h1>
+        <h2>{{ class_obj.name }}</h2>
+
+        <div class="timer-box">
+            <p style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">Attendance Code</p>
+            <div class="timer-code">{{ attendance.code }}</div>
+            <p style="color: var(--text-muted); margin-top: 10px;">Announce or display this code to the class</p>
+
+            <hr style="margin: 15px 0;">
+
+            <p style="font-weight: 600; color: var(--text-color);">Time Remaining:</p>
+            <div id="timer-clock" class="timer-clock">Loading...</div>
+            <p style="color: var(--text-muted); margin-top:10px;">
+                {% if attendance.location_enabled %}
+                    📍 Location verification: <strong>ON</strong> ({{ attendance.radius_meters|round(0) }}m radius)
+                {% else %}
+                    📍 Location verification: <strong>OFF</strong>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="alert alert-success">
+            🟢 Students can now enter this code on their devices to log attendance.
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn">Back to Class Page</a>
+        <a href="{{ url_for('attendance_history', class_id=class_obj.id) }}" class="btn btn-secondary">📊 View Live Attendance Sheet</a>
+
+    </div>
+
+    <script>
+        const endTimeIso = "{{ end_time_iso }}";
+        const endTime = new Date(endTimeIso).getTime();
+
+        function updateClock() {
+            const now = new Date().getTime();
+            const distance = endTime - now;
+
+            if (distance < 0) {
+                document.getElementById("timer-clock").innerHTML = "EXPIRED";
+                document.getElementById("timer-clock").style.color = "gray";
+                return;
+            }
+
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const minStr = minutes < 10 ? "0" + minutes : minutes;
+            const secStr = seconds < 10 ? "0" + seconds : seconds;
+
+            document.getElementById("timer-clock").innerHTML = minStr + ":" + secStr;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+
+</body>
+</html>

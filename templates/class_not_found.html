@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Not Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container" style="max-width:500px; text-align:center; margin-top:60px;">
+    <div class="alert alert-danger">
+        <strong>Class not found.</strong>
+    </div>
+    <p>This class may have been deleted by the owner.</p>
+    <p>You will be returned to your dashboard.</p>
+</div>
+
+<script>
+    alert("class not found");
+    window.location.href = "{{ url_for('dashboard') }}";
+</script>
+</body>
+</html>

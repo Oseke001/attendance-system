@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Announcement — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 600px; margin-top: 30px;">
+
+        <div class="header-banner">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <h2>Post Announcement</h2>
+        <h3 style="color: var(--primary); margin-top: 0;">{{ class_obj.name }}</h3>
+
+        <p style="color: var(--text-muted);">
+            Announcements will be visible on the Class Page for all enrolled members.
+        </p>
+
+        <form action="{{ url_for('post_announcement', class_id=class_obj.id) }}" method="POST">
+
+            <div class="form-group">
+                <label for="title">Announcement Title</label>
+                <input type="text" id="title" name="title" placeholder="e.g. Test Next Week / Venue Change" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Announcement Message</label>
+                <textarea id="content" name="content" rows="5" placeholder="Enter announcement details for students..." required style="width: 100%; padding: 12px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 12px; margin-top: 10px;">
+                📢 Publish Announcement
+            </button>
+
+        </form>
+
+        <hr>
+
+        <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn btn-secondary">← Back to Class Page</a>
+
+    </div>
+
+</body>
+</html>

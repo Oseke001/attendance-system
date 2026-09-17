@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Class — Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 500px; margin-top: 30px;">
+
+        <h2>Join a Class</h2>
+        <p style="color: var(--text-muted);">Enter the 8-character class code provided by your lecturer.</p>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="class_code">Class Code</label>
+                <input type="text" id="class_code" name="class_code" placeholder="e.g. X7K92P4A" required style="text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Join Class</button>
+
+        </form>
+
+        <hr>
+
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

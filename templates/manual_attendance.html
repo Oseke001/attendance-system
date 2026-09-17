@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Attendance — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container" style="max-width:600px;">
+    <div class="header-banner">
+        <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+        <div><a href="{{ url_for('logout') }}">Logout</a></div>
+    </div>
+
+    <h2>Manual Attendance</h2>
+    <h3 style="color:var(--primary);">{{ class_obj.name }}</h3>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+
+    {% if active_session %}
+        <div class="alert alert-success">
+            🟢 Attendance is live. You can manually mark a student who could not sign in.
+        </div>
+
+        <p>
+            Current session:
+            <strong>#{{ active_session.id }}</strong>
+        </p>
+
+        <form action="{{ url_for('manual_attendance', class_id=class_obj.id) }}" method="POST">
+            <div class="form-group">
+                <label for="user_id">Select Student</label>
+                <select name="user_id" id="user_id" required>
+                    <option value="">-- Choose Student --</option>
+                    {% for member in members %}
+                        {% if member.role != 'owner' %}
+                            <option value="{{ member.user.id }}">
+                                {{ member.user.name }} — {{ member.user.matric_number }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width:100%;">
+                Mark Student Present
+            </button>
+        </form>
+    {% else %}
+        <div class="alert alert-warning">
+            There is no active attendance session. Manual attendance is only available while attendance is live.
+        </div>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn btn-secondary">
+        ← Back to Class
+    </a>
+</div>
+
+</body>
+</html>

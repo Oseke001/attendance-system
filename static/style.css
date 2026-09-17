@@ -1,0 +1,1509 @@
+/* =========================================================
+   PROJECT 002
+   DIGITAL ATTENDANCE SYSTEM
+   COMPLETE MODERN PURPLE UI
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
+
+:root {
+    --primary: #a855f7;
+    --primary-light: #c084fc;
+    --primary-dark: #6b21a8;
+
+    --purple-deep: #17001f;
+    --purple-dark: #23002f;
+    --purple-mid: #3b0754;
+
+    --pink: #ec4899;
+    --pink-light: #f472b6;
+
+    --orange: #ff9a3d;
+
+    --bg-color: #110014;
+    --card-bg: rgba(255, 255, 255, 0.075);
+
+    --text-color: #f8f5ff;
+    --text-muted: #b9a9c4;
+
+    --border-color: rgba(255, 255, 255, 0.12);
+
+    --success: #34d399;
+    --success-bg: rgba(52, 211, 153, 0.12);
+
+    --danger: #fb7185;
+    --danger-bg: rgba(251, 113, 133, 0.12);
+
+    --warning: #fbbf24;
+    --warning-bg: rgba(251, 191, 36, 0.12);
+
+    --shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45);
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    color: var(--text-color);
+
+    line-height: 1.6;
+
+    padding: 35px 20px;
+
+    background:
+        radial-gradient(
+            circle at 10% 15%,
+            rgba(168, 85, 247, 0.20),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 85%,
+            rgba(236, 72, 153, 0.15),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #110014 0%,
+            #23002f 50%,
+            #140019 100%
+        );
+
+    position: relative;
+
+    overflow-x: hidden;
+}
+
+
+/* Background decorative glow */
+
+body::before {
+    content: "";
+
+    position: fixed;
+
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.08),
+            rgba(236, 72, 153, 0.05)
+        );
+
+    filter: blur(80px);
+
+    top: -250px;
+    left: -200px;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+body::after {
+    content: "";
+
+    position: fixed;
+
+    width: 450px;
+    height: 450px;
+
+    border-radius: 50%;
+
+    background: rgba(236, 72, 153, 0.07);
+
+    filter: blur(100px);
+
+    right: -220px;
+    bottom: -220px;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.container {
+    width: min(900px, 100%);
+
+    margin: 0 auto;
+
+    padding: 35px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.09),
+            rgba(255, 255, 255, 0.035)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+/* Decorative container glow */
+
+.container::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(192, 132, 252, 0.10);
+
+    right: -100px;
+    top: -100px;
+
+    pointer-events: none;
+}
+
+
+.container::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 45%;
+
+    border: 1px solid rgba(236, 72, 153, 0.08);
+
+    left: -100px;
+    bottom: -90px;
+
+    transform: rotate(35deg);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADINGS
+   ========================================================= */
+
+h1 {
+    font-size: 2rem;
+
+    color: #ffffff;
+
+    margin-bottom: 12px;
+
+    font-weight: 750;
+
+    letter-spacing: -0.5px;
+}
+
+
+h2 {
+    font-size: 1.55rem;
+
+    color: #ffffff;
+
+    margin-bottom: 20px;
+
+    font-weight: 700;
+}
+
+
+h3 {
+    font-size: 1.15rem;
+
+    color: #ffffff;
+
+    margin: 25px 0 12px;
+
+    font-weight: 650;
+}
+
+
+p {
+    margin-bottom: 12px;
+}
+
+
+a {
+    color: var(--primary-light);
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+a:hover {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header-banner {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border:
+
+        1px solid rgba(255, 255, 255, 0.08);
+
+    padding: 14px 18px;
+
+    border-radius: 14px;
+
+    margin-bottom: 28px;
+
+    font-size: 0.9rem;
+
+    color: var(--text-muted);
+
+    backdrop-filter: blur(10px);
+}
+
+
+.header-banner strong {
+    color: #ffffff;
+}
+
+
+.header-banner a {
+    color: var(--pink-light);
+
+    font-weight: 650;
+
+    text-decoration: none;
+}
+
+
+.header-banner a:hover {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   HORIZONTAL LINE
+   ========================================================= */
+
+hr {
+    border: none;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    margin: 25px 0;
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+form {
+    margin-top: 15px;
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+label {
+    display: block;
+
+    font-size: 0.84rem;
+
+    font-weight: 600;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    margin-bottom: 8px;
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 12px 16px;
+
+    font-family: inherit;
+
+    font-size: 0.94rem;
+
+    color: #ffffff;
+
+    background:
+        rgba(255, 255, 255, 0.075);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.11);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+textarea {
+    min-height: 120px;
+
+    resize: vertical;
+}
+
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.34);
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color:
+        rgba(192, 132, 252, 0.75);
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 0 0 3px rgba(168, 85, 247, 0.12);
+
+    transform: translateY(-1px);
+}
+
+
+/* Select */
+
+select {
+    appearance: none;
+
+    cursor: pointer;
+}
+
+
+select option {
+    background: #280033;
+
+    color: white;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+    display: inline-block;
+
+    padding: 11px 21px;
+
+    min-height: 45px;
+
+    font-family: inherit;
+
+    font-size: 0.92rem;
+
+    font-weight: 650;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a855f7,
+            #ec4899
+        );
+
+    border: none;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    text-align: center;
+
+    margin-right: 8px;
+
+    margin-bottom: 8px;
+
+    box-shadow:
+        0 8px 22px rgba(168, 85, 247, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.btn:hover {
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(168, 85, 247, 0.30);
+}
+
+
+.btn:active {
+    transform: translateY(0);
+}
+
+
+/* Secondary */
+
+.btn-secondary {
+    background:
+        rgba(255, 255, 255, 0.09);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow: none;
+}
+
+
+.btn-secondary:hover {
+    background:
+        rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.20);
+}
+
+
+/* Success */
+
+.btn-success {
+    background:
+        linear-gradient(
+            90deg,
+            #10b981,
+            #34d399
+        );
+
+    box-shadow:
+        0 8px 22px rgba(16, 185, 129, 0.20);
+}
+
+
+.btn-success:hover {
+    background:
+        linear-gradient(
+            90deg,
+            #059669,
+            #10b981
+        );
+}
+
+
+/* Danger */
+
+.btn-danger {
+    background:
+        linear-gradient(
+            90deg,
+            #ef4444,
+            #fb7185
+        );
+
+    box-shadow:
+        0 8px 22px rgba(239, 68, 68, 0.20);
+}
+
+
+.btn-danger:hover {
+    background:
+        linear-gradient(
+            90deg,
+            #dc2626,
+            #ef4444
+        );
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    margin-bottom: 16px;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.card:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(255, 255, 255, 0.075);
+
+    border-color:
+        rgba(192, 132, 252, 0.25);
+}
+
+
+.card-title {
+    font-size: 1.12rem;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+    margin-bottom: 6px;
+}
+
+
+.card-title a {
+    color: #ffffff;
+
+    text-decoration: none;
+}
+
+
+.card-title a:hover {
+    color: var(--primary-light);
+}
+
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.badge {
+    display: inline-block;
+
+    padding: 4px 11px;
+
+    font-size: 0.75rem;
+
+    font-weight: 700;
+
+    border-radius: 20px;
+
+    letter-spacing: 0.2px;
+}
+
+
+.badge-owner {
+    background:
+        rgba(168, 85, 247, 0.16);
+
+    color:
+        #d8b4fe;
+
+    border:
+        1px solid rgba(168, 85, 247, 0.30);
+}
+
+
+.badge-admin {
+    background:
+        rgba(52, 211, 153, 0.12);
+
+    color:
+        #6ee7b7;
+
+    border:
+        1px solid rgba(52, 211, 153, 0.25);
+}
+
+
+.badge-member {
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    color:
+        #d1c4d8;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+}
+
+
+.badge-present {
+    background:
+        rgba(52, 211, 153, 0.12);
+
+    color:
+        #6ee7b7;
+}
+
+
+.badge-denied {
+    background:
+        rgba(251, 113, 133, 0.12);
+
+    color:
+        #fda4af;
+}
+
+
+.badge-warning {
+    background:
+        rgba(251, 191, 36, 0.12);
+
+    color:
+        #fcd34d;
+}
+
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.alert {
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+
+    font-size: 0.9rem;
+
+    font-weight: 500;
+
+    border: 1px solid transparent;
+}
+
+
+.alert-success {
+    background:
+        rgba(52, 211, 153, 0.10);
+
+    color:
+        #6ee7b7;
+
+    border-color:
+        rgba(52, 211, 153, 0.25);
+}
+
+
+.alert-danger {
+    background:
+        rgba(251, 113, 133, 0.10);
+
+    color:
+        #fda4af;
+
+    border-color:
+        rgba(251, 113, 133, 0.25);
+}
+
+
+.alert-warning {
+    background:
+        rgba(251, 191, 36, 0.10);
+
+    color:
+        #fcd34d;
+
+    border-color:
+        rgba(251, 191, 36, 0.25);
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.table-responsive {
+    overflow-x: auto;
+
+    margin-top: 18px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-bottom: 0;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+}
+
+
+th,
+td {
+    padding: 14px 16px;
+
+    text-align: left;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    white-space: nowrap;
+}
+
+
+th {
+    background:
+        rgba(168, 85, 247, 0.13);
+
+    color:
+        #e9d5ff;
+
+    font-size: 0.83rem;
+
+    font-weight: 700;
+}
+
+
+td {
+    color:
+        rgba(255, 255, 255, 0.75);
+
+    font-size: 0.88rem;
+}
+
+
+tr:hover {
+    background:
+        rgba(255, 255, 255, 0.045);
+}
+
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress-container {
+    width: 100%;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    height: 12px;
+
+    margin: 12px 0;
+}
+
+
+.progress-bar {
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a855f7,
+            #ec4899
+        );
+
+    width: 0%;
+
+    transition:
+        width 0.4s ease;
+
+    border-radius: 20px;
+}
+
+
+/* =========================================================
+   ATTENDANCE TIMER
+   ========================================================= */
+
+.timer-box {
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(168, 85, 247, 0.13),
+            rgba(236, 72, 153, 0.08)
+        );
+
+    border:
+        1px solid rgba(192, 132, 252, 0.25);
+
+    border-radius: 20px;
+
+    padding: 30px 20px;
+
+    margin: 25px 0;
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.18);
+}
+
+
+.timer-code {
+    font-size: 2.8rem;
+
+    font-weight: 850;
+
+    letter-spacing: 7px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 25px rgba(192, 132, 252, 0.45);
+}
+
+
+.timer-clock {
+    font-size: 1.5rem;
+
+    font-weight: 700;
+
+    color:
+        #f9a8d4;
+
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+#map {
+    width: 100%;
+
+    height: 350px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    margin-top: 15px;
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CODE ELEMENT
+   ========================================================= */
+
+code {
+    background:
+        rgba(168, 85, 247, 0.13) !important;
+
+    color:
+        #d8b4fe !important;
+
+    border:
+        1px solid rgba(168, 85, 247, 0.18);
+
+    border-radius: 6px;
+
+    padding: 3px 8px;
+
+    font-family:
+        "Courier New",
+        monospace;
+}
+
+
+/* =========================================================
+   LOGIN PAGE
+   CSS-ONLY REDESIGN
+   No HTML changes required
+   ========================================================= */
+
+
+/*
+   The login HTML uses:
+
+   .container
+   h2
+   .form-group
+   input
+   .btn
+
+   We use those existing elements to create the
+   new visual style.
+*/
+
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) {
+    padding: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 100vh;
+}
+
+
+/* Make login container wider */
+
+/* body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
+    width: min(1050px, 95vw);
+
+    max-width: 1050px !important;
+
+    min-height: 600px;
+
+    padding: 60px 60px 60px 52%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(71, 0, 85, 0.94),
+            rgba(30, 0, 43, 0.96)
+        );
+
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.55);
+} */
+
+
+/* Left welcome panel */
+
+/* body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
+    content:
+        "WELCOME! \A\A"
+        "Digital Attendance System\A"
+        "Manage your classes and attendance\A"
+        "easily, securely and efficiently.";
+
+    white-space: pre-line;
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 50%;
+
+    padding:
+        150px 55px 50px;
+
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    line-height: 1.8;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(82, 0, 102, 0.95),
+            rgba(42, 0, 60, 0.90)
+        );
+
+    border-right:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    text-shadow:
+        0 2px 20px rgba(0, 0, 0, 0.25);
+} */
+
+
+/* Decorative shapes on login */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::after {
+    content: "";
+
+    position: absolute;
+
+    width: 330px;
+    height: 330px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(192, 132, 252, 0.13);
+
+    left: -150px;
+    bottom: -120px;
+
+    box-shadow:
+        100px -80px 0 -30px rgba(236, 72, 153, 0.05),
+        160px -150px 0 -70px rgba(192, 132, 252, 0.08);
+
+    pointer-events: none;
+}
+
+
+/* Login heading */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container > h2 {
+    font-size: 2rem;
+
+    color: #ffffff;
+
+    margin-bottom: 28px;
+
+    text-align: left;
+}
+
+
+/* Login form */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container form {
+    position: relative;
+
+    z-index: 5;
+}
+
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container .form-group {
+    margin-bottom: 22px;
+}
+
+
+/* Login inputs */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #email,
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #password {
+    border-radius: 25px;
+
+    height: 50px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #email:focus,
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #password:focus {
+    border-color:
+        rgba(244, 114, 182, 0.75);
+}
+
+
+/* Login labels */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) label {
+    font-size: 0.78rem;
+
+    color:
+        rgba(255, 255, 255, 0.70);
+}
+
+
+/* Login button */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .btn {
+    width: 100% !important;
+
+    height: 50px;
+
+    border-radius: 25px;
+
+    margin-top: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff9a3d,
+            #ff4d69,
+            #ec4899
+        );
+
+    box-shadow:
+        0 10px 28px rgba(236, 72, 153, 0.25);
+}
+
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .btn:hover {
+    background:
+        linear-gradient(
+            90deg,
+            #ffab55,
+            #ff5270,
+            #f05ba5
+        );
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* Login divider */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) hr {
+    margin:
+        28px 0 18px;
+}
+
+
+/* Login register link */
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) a {
+    color:
+        #f472b6 !important;
+
+    text-decoration: none;
+}
+
+
+body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) a:hover {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   REGISTER PAGE
+   ========================================================= */
+
+body:has(.btn-success):has(#matric_number) .container {
+    max-width: 520px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.09),
+            rgba(255, 255, 255, 0.035)
+        );
+}
+
+
+body:has(.btn-success):has(#matric_number) h2 {
+    font-size: 2rem;
+
+    margin-bottom: 25px;
+}
+
+
+body:has(.btn-success):has(#matric_number) .btn-success {
+    height: 48px;
+
+    border-radius: 25px;
+}
+
+
+/* =========================================================
+   INLINE STYLE OVERRIDES
+   ========================================================= */
+
+/* Make common inline text colors fit dark theme */
+
+.container [style*="color: var(--text-muted)"] {
+    color: var(--text-muted) !important;
+}
+
+
+/* Override light gray inline backgrounds */
+
+.container [style*="background: #edf2f7"],
+.container [style*="background:#edf2f7"] {
+    background:
+        rgba(168, 85, 247, 0.12) !important;
+
+    color:
+        #d8b4fe !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .container {
+        padding: 25px 20px;
+
+        border-radius: 17px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    .header-banner {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .btn {
+        width: 100%;
+
+        margin-right: 0;
+    }
+
+
+    /* Login mobile */
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) {
+        padding: 12px;
+
+        align-items: center;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
+        width: 100%;
+
+        min-height: auto;
+
+        padding:
+            300px 25px 35px;
+
+        max-width: none !important;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
+        width: 100%;
+
+        height: 270px;
+
+        bottom: auto;
+
+        padding:
+            55px 30px;
+
+        border-right: none;
+
+        border-bottom:
+            1px solid rgba(255, 255, 255, 0.08);
+
+        font-size: 15px;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::after {
+        width: 200px;
+
+        height: 200px;
+
+        left: -90px;
+
+        bottom: auto;
+
+        top: 80px;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container > h2 {
+        font-size: 1.7rem;
+    }
+
+
+    .timer-code {
+        font-size: 2rem;
+
+        letter-spacing: 4px;
+    }
+
+
+    .timer-clock {
+        font-size: 1.2rem;
+    }
+
+
+    th,
+    td {
+        padding: 10px 12px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 10px;
+    }
+
+
+    .container {
+        padding: 22px 17px;
+    }
+
+
+    .card {
+        padding: 16px;
+    }
+
+
+    .timer-box {
+        padding: 25px 15px;
+    }
+
+
+    .timer-code {
+        font-size: 1.65rem;
+
+        letter-spacing: 3px;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
+        padding:
+            280px 20px 30px;
+    }
+
+
+    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
+        height: 250px;
+
+        padding:
+            45px 25px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline:
+        2px solid #c084fc;
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+    background:
+        rgba(168, 85, 247, 0.45);
+
+    color: #ffffff;
+}

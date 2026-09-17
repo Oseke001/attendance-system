@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 480px; margin-top: 30px;">
+
+        <h2>Create Account</h2>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label for="matric_number">Matric / Staff Number</label>
+                <input type="text" id="matric_number" name="matric_number" placeholder="e.g. 2024001" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="e.g. john@test.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" placeholder="Create password" required style="padding-right: 45px;">
+                    <button type="button" onclick="togglePasswordVisibility('password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem;" title="Toggle Password Visibility">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;">Register Account</button>
+
+        </form>
+
+        <hr>
+
+        <p style="text-align: center; color: var(--text-muted);">
+            Already registered? <a href="{{ url_for('login') }}" style="color: var(--primary); font-weight: 600;">Login here</a>
+        </p>
+
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerText = "🙈";
+            } else {
+                input.type = "password";
+                btn.innerText = "👁️";
+            }
+        }
+    </script>
+
+</body>
+</html>

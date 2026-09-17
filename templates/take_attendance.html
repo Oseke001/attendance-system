@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Attendance — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 500px; margin-top: 30px;">
+
+        <div class="header-banner">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <h2>Take Attendance</h2>
+        <h3 style="color: var(--primary); margin-top: 0;">{{ class_obj.name }}</h3>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
+
+        <p style="color: var(--text-muted);">
+            Enter the temporary 6-character code provided by your lecturer.
+            {% if location_required %}
+                Location access will also be verified automatically.
+            {% else %}
+                Location verification is not required for this session.
+            {% endif %}
+        </p>
+
+        <form
+            id="attendance-form"
+            action="{{ url_for('take_attendance', class_id=class_obj.id) }}"
+            method="POST"
+            onsubmit="event.preventDefault(); submitWithLocation();"
+        >
+
+            <div class="form-group">
+                <label for="code">Attendance Code</label>
+                <input
+                    type="text"
+                    id="code"
+                    name="code"
+                    placeholder="Enter 6-character code"
+                    required
+                    style="text-transform: uppercase; font-size: 1.4rem; letter-spacing: 4px; text-align: center; font-weight: bold;"
+                >
+            </div>
+
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <div id="gps-status" style="display: none; margin-bottom: 15px; font-weight: 500;"></div>
+
+            <button type="submit" id="submit-btn" class="btn btn-success" style="width: 100%; padding: 12px; font-size: 1.05rem;">
+                {% if location_required %}
+                    📍 Submit Code & Verify Location
+                {% else %}
+                    ✅ Submit Attendance Code
+                {% endif %}
+            </button>
+
+        </form>
+
+        <hr>
+
+        <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn btn-secondary">← Back to Class</a>
+
+    </div>
+
+    <script>
+        const locationRequired = {{ 'true' if location_required else 'false' }};
+
+        function submitWithLocation() {
+            const form = document.getElementById("attendance-form");
+            const gpsStatus = document.getElementById("gps-status");
+            const submitBtn = document.getElementById("submit-btn");
+
+            // If the Owner disabled location for this session,
+            // submit directly without asking the student for GPS.
+            if (!locationRequired) {
+                form.submit();
+                return;
+            }
+
+            gpsStatus.style.display = "block";
+            gpsStatus.style.color = "var(--primary)";
+            gpsStatus.innerText = "📍 Acquiring GPS location... Please allow location permission if prompted.";
+            submitBtn.disabled = true;
+
+            if (!navigator.geolocation) {
+                gpsStatus.style.color = "var(--danger)";
+                gpsStatus.innerText = "Geolocation is not supported by your browser.";
+                submitBtn.disabled = false;
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
+                    gpsStatus.style.color = "var(--success)";
+                    gpsStatus.innerText = "Location obtained. Submitting attendance...";
+                    form.submit();
+                },
+                function(error) {
+                    gpsStatus.style.color = "var(--danger)";
+                    gpsStatus.innerText = "Location permission is required for this attendance session.";
+                    submitBtn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+    </script>
+
+</body>
+</html>

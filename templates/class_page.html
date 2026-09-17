@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ class_obj.name }} — Class Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header-banner">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h1>{{ class_obj.name }}</h1>
+                <p style="color: var(--text-muted);">
+                    Class Code: <code style="background: #edf2f7; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 1.1rem; color: var(--primary-dark);">{{ class_obj.class_code }}</code>
+                </p>
+            </div>
+            <div>
+                {% if membership.role == 'owner' %}
+                    <span class="badge badge-owner" style="font-size: 0.95rem; padding: 6px 14px;">Role: Owner</span>
+                {% elif membership.role == 'admin' %}
+                    <span class="badge badge-admin" style="font-size: 0.95rem; padding: 6px 14px;">Role: Admin</span>
+                {% else %}
+                    <span class="badge badge-member" style="font-size: 0.95rem; padding: 6px 14px;">Role: Member</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Announcements Section -->
+        <h3>📢 Class Announcements</h3>
+
+        {% if attendance_live %}
+            <div class="alert alert-success" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px;">
+                <strong>🟢 ATTENDANCE IS LIVE</strong>
+                <span>Students can sign attendance now.</span>
+            </div>
+        {% elif attendance_ended %}
+            <div class="alert alert-danger" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px;">
+                <strong>🔴 ATTENDANCE ENDED</strong>
+                <span>The latest attendance session is closed.</span>
+            </div>
+        {% endif %}
+
+        {% if announcements %}
+            {% for a in announcements %}
+                <div class="card" style="border-left: 4px solid var(--primary); background: #fff;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <h4 style="margin:0; color: var(--primary-dark);">{{ a.title }}</h4>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">{{ a.timestamp.strftime('%b %d, %Y %I:%M %p') }}</span>
+                    </div>
+                    <p style="margin-bottom: 6px; font-size: 0.95rem;">{{ a.content }}</p>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin:0;">
+                        Posted by: <strong>{{ a.author.name }}</strong>
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;">No announcements posted yet.</p>
+        {% endif %}
+
+        <hr>
+
+        <h3>Control Panel</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px;">
+            {% if membership.role == 'owner' %}
+                <a href="{{ url_for('start_attendance', class_id=class_obj.id) }}" class="btn btn-success">⚡ Start Attendance</a>
+                <a href="{{ url_for('manual_attendance', class_id=class_obj.id) }}" class="btn btn-secondary">✏️ Manual Attendance</a>
+                <a href="{{ url_for('post_announcement', class_id=class_obj.id) }}" class="btn btn-secondary">📢 Post Announcement</a>
+                <a href="{{ url_for('attendance_history', class_id=class_obj.id) }}" class="btn">📊 View Attendance Sheet</a>
+            {% elif membership.role == 'admin' %}
+                <a href="{{ url_for('manual_attendance', class_id=class_obj.id) }}" class="btn btn-secondary">✏️ Manual Attendance</a>
+            {% else %}
+                <a href="{{ url_for('take_attendance', class_id=class_obj.id) }}" class="btn btn-success">✏️ Take Attendance</a>
+                <a href="{{ url_for('attendance_history', class_id=class_obj.id) }}" class="btn btn-secondary">📋 My Attendance History</a>
+            {% endif %}
+
+            {% if membership.role == 'owner' %}
+                <form action="{{ url_for('delete_class', class_id=class_obj.id) }}" method="POST" onsubmit="return confirm('⚠️ Are you sure you want to delete this class? All attendance sessions and history will be permanently deleted.');" style="display: inline; margin:0;">
+                    <button type="submit" class="btn btn-danger">🗑️ Delete Class</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <h3>Class Roster</h3>
+
+        {% if members %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student / Staff Name</th>
+                            <th>Matric Number</th>
+                            <th>Role</th>
+                            {% if membership.role == 'owner' %}
+                                <th>Manage Role</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr>
+                                <td><strong>{{ member.user.name }}</strong></td>
+                                <td>{{ member.user.matric_number }}</td>
+                                <td>
+                                    {% if member.role == 'owner' %}
+                                        <span class="badge badge-owner">Owner</span>
+                                    {% elif member.role == 'admin' %}
+                                        <span class="badge badge-admin">Admin</span>
+                                    {% else %}
+                                        <span class="badge badge-member">Member</span>
+                                    {% endif %}
+                                </td>
+                                {% if membership.role == 'owner' %}
+                                    <td>
+                                        {% if member.role == 'member' %}
+                                            <form action="{{ url_for('make_admin', class_id=class_obj.id, user_id=member.user_id) }}" method="POST" style="margin:0;">
+                                                <button type="submit" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.82rem; margin:0;">Promote to Admin</button>
+                                            </form>
+                                        {% elif member.role == 'admin' %}
+                                            <form action="{{ url_for('demote_admin', class_id=class_obj.id, user_id=member.user_id) }}" method="POST" style="margin:0;">
+                                                <button type="submit" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.82rem; margin:0;">Demote to Member</button>
+                                            </form>
+                                        {% else %}
+                                            <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;">No members yet.</p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container" style="max-width: 450px; margin-top: 40px;">
+
+
+        <h2>Account Login</h2>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="e.g. lecturer@test.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" placeholder="Enter password" required style="padding-right: 45px;">
+                    <button type="button" onclick="togglePasswordVisibility('password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem;" title="Toggle Password Visibility">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Login</button>
+
+        </form>
+
+        <hr>
+
+        <p style="text-align: center; color: var(--text-muted);">
+            Don't have an account? <a href="{{ url_for('register') }}" style="color: var(--primary); font-weight: 600;">Register here</a>
+        </p>
+
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerText = "🙈";
+            } else {
+                input.type = "password";
+                btn.innerText = "👁️";
+            }
+        }
+    </script>
+
+</body>
+</html>

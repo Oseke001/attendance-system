@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Attendance — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container" style="max-width: 650px;">
+
+    <div class="header-banner">
+        <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+        <div><a href="{{ url_for('logout') }}">Logout</a></div>
+    </div>
+
+    <h2>Start Attendance Session</h2>
+    <h3 style="color: var(--primary); margin-top: 0;">{{ class_obj.name }}</h3>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form action="{{ url_for('start_attendance', class_id=class_obj.id) }}" method="POST">
+
+        <div class="card">
+            <h3 style="margin-top:0;">1. Attendance Code Duration</h3>
+            <p style="color: var(--text-muted);">
+                Choose how long the temporary code should remain valid.
+                The default is <strong>1 hour 30 minutes (1:30)</strong>.
+            </p>
+
+            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                <div class="form-group" style="flex:1; min-width:140px;">
+                    <label for="duration_hours">Hours</label>
+                    <input type="number" id="duration_hours" name="duration_hours"
+                           min="0" max="23" value="1" required>
+                </div>
+
+                <div class="form-group" style="flex:1; min-width:140px;">
+                    <label for="duration_minutes">Minutes</label>
+                    <input type="number" id="duration_minutes" name="duration_minutes"
+                           min="0" max="59" value="30" required>
+                </div>
+            </div>
+
+            <p id="duration-preview" style="font-weight:600;">
+                Code validity: 1 hour 30 minutes
+            </p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0;">2. Classroom Location</h3>
+
+            <label style="display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:12px;">
+                <input type="checkbox" id="use_location" name="use_location"
+                       {% if class_obj.latitude is not none and class_obj.longitude is not none %}checked{% else %}checked{% endif %}>
+                Use location verification for this session
+            </label>
+
+            <p style="color:var(--text-muted);">
+                Location verification is enabled by default but can be turned off for this session.
+                When enabled, students must be within the allowed classroom radius.
+            </p>
+
+            <div id="location-fields">
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button type="button" onclick="detectLocation()" class="btn btn-secondary">
+                        📍 Use My Current Location
+                    </button>
+                </div>
+
+                <div id="location-status" style="display:none; margin-bottom:15px; font-weight:500;"></div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:15px;">
+                    <div class="form-group">
+                        <label for="latitude">Latitude</label>
+                        <input type="number" step="any" id="latitude" name="latitude"
+                               value="{{ class_obj.latitude if class_obj.latitude is not none else '' }}"
+                               placeholder="e.g. 6.5244">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="longitude">Longitude</label>
+                        <input type="number" step="any" id="longitude" name="longitude"
+                               value="{{ class_obj.longitude if class_obj.longitude is not none else '' }}"
+                               placeholder="e.g. 3.3792">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="radius_meters">Allowed Radius (meters)</label>
+                        <input type="number" step="any" min="1" id="radius_meters"
+                               name="radius_meters"
+                               value="{{ class_obj.radius_meters or 50.0 }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success"
+                style="width:100%; padding:14px; font-size:1.1rem;">
+            ⚡ Generate Code & Start Attendance
+        </button>
+
+    </form>
+
+    <hr>
+
+    <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn btn-secondary">
+        ← Back to Class
+    </a>
+
+</div>
+
+<script>
+    const useLocation = document.getElementById("use_location");
+    const locationFields = document.getElementById("location-fields");
+
+    function toggleLocation() {
+        locationFields.style.display = useLocation.checked ? "block" : "none";
+    }
+
+    useLocation.addEventListener("change", toggleLocation);
+    toggleLocation();
+
+    const hoursInput = document.getElementById("duration_hours");
+    const minutesInput = document.getElementById("duration_minutes");
+    const preview = document.getElementById("duration-preview");
+
+    function updateDurationPreview() {
+        const hours = parseInt(hoursInput.value || 0);
+        const minutes = parseInt(minutesInput.value || 0);
+
+        let text = "Code validity: ";
+        if (hours > 0) text += hours + (hours === 1 ? " hour" : " hours");
+        if (hours > 0 && minutes > 0) text += " ";
+        if (minutes > 0) text += minutes + " " + (minutes === 1 ? "minute" : "minutes");
+        if (hours === 0 && minutes === 0) text += "0 minutes";
+
+        preview.innerText = text;
+    }
+
+    hoursInput.addEventListener("input", updateDurationPreview);
+    minutesInput.addEventListener("input", updateDurationPreview);
+
+    function detectLocation() {
+        const status = document.getElementById("location-status");
+        status.style.display = "block";
+        status.style.color = "var(--primary)";
+        status.innerText = "📍 Detecting your location...";
+
+        if (!navigator.geolocation) {
+            status.style.color = "var(--danger)";
+            status.innerText = "Geolocation is not supported by this browser.";
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                document.getElementById("latitude").value = position.coords.latitude.toFixed(6);
+                document.getElementById("longitude").value = position.coords.longitude.toFixed(6);
+                status.style.color = "var(--success)";
+                status.innerText = "✅ Location detected. You can adjust the radius below.";
+            },
+            function(error) {
+                status.style.color = "var(--danger)";
+                status.innerText = "Unable to detect location: " + error.message;
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+</script>
+
+</body>
+</html>

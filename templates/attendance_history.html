@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Sheet & Analytics — {{ class_obj.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header-banner">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h1>Attendance Sheet & Analytics</h1>
+                <h2 style="color: var(--primary); margin-top: 0;">{{ class_obj.name }}</h2>
+            </div>
+
+            {% if membership.role == 'owner' %}
+                <div>
+                    <a href="{{ url_for('export_csv', class_id=class_obj.id) }}" class="btn btn-success" style="font-size: 0.95rem; padding: 10px 16px;">
+                        📥 Export Excel / CSV Report
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        {% if membership.role == 'owner' %}
+
+            <!-- Analytics Overview & Low Attendance Alerts -->
+            <h3>📊 Student Attendance Analytics</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Total Sessions Conducted: <strong>{{ total_sessions }}</strong> | Students below 75% attendance threshold are flagged below.
+            </p>
+
+            {% if student_analytics %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Matric Number</th>
+                                <th>Sessions Attended</th>
+                                <th>Attendance Rate</th>
+                                <th>Status Alert</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in student_analytics %}
+                                <tr>
+                                    <td><strong>{{ stat.user.name }}</strong></td>
+                                    <td>{{ stat.user.matric_number }}</td>
+                                    <td>{{ stat.attended }} / {{ stat.total }}</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <div class="progress-container" style="width: 100px; margin:0;">
+                                                <div class="progress-bar" style="width: {{ stat.rate }}%; background-color: {% if stat.is_low %}var(--danger){% else %}var(--success){% endif %};"></div>
+                                            </div>
+                                            <span><strong>{{ stat.rate }}%</strong></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if stat.is_low %}
+                                            <span class="badge badge-denied">⚠️ At Risk (&lt;75%)</span>
+                                        {% else %}
+                                            <span class="badge badge-present">Good Standing</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <hr>
+
+            <hr>
+
+            <h3>📋 Complete Class Attendance Log</h3>
+
+        {% else %}
+
+            <h3>📋 My Attendance Records</h3>
+
+        {% endif %}
+
+        {% if records %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            {% if membership.role == 'owner' %}
+                                <th>Student Name</th>
+                                <th>Matric Number</th>
+                            {% endif %}
+                            <th>Status</th>
+                            <th>Distance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                            <tr>
+                                <td>{{ record.timestamp.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                                {% if membership.role == 'owner' %}
+                                    <td><strong>{{ record.user.name }}</strong></td>
+                                    <td>{{ record.user.matric_number }}</td>
+                                {% endif %}
+                                <td>
+                                    {% if 'Present' in record.status %}
+                                        <span class="badge badge-present">{{ record.status }}</span>
+                                    {% else %}
+                                        <span class="badge badge-denied">{{ record.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if record.distance_meters is not none %}
+                                        {{ "%.1f"|format(record.distance_meters) }}m
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;">No attendance records logged yet.</p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('class_page', class_id=class_obj.id) }}" class="btn btn-secondary">← Back to Class Page</a>
+
+    </div>
+
+</body>
+</html>

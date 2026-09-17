@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header-banner">
+            <div>Logged in as: <strong>{{ user.name }}</strong> ({{ user.email }})</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <h1>Attendance Dashboard</h1>
+        <p style="color: var(--text-muted);">Matric / Staff Number: <strong>{{ user.matric_number }}</strong></p>
+
+        <hr>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+            <a href="{{ url_for('create_class') }}" class="btn">➕ Create Class</a>
+            <a href="{{ url_for('join_class') }}" class="btn btn-secondary">🔑 Join Class</a>
+        </div>
+
+        <h3>Classes I Own</h3>
+
+        {% if owned_classes %}
+            {% for class in owned_classes %}
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-title">
+                            <a href="{{ url_for('class_page', class_id=class.id) }}">
+                                📚 {{ class.name }}
+                            </a>
+                        </div>
+                        <span class="badge badge-owner">Owner</span>
+                    </div>
+                    <p style="margin-top: 8px; color: var(--text-muted); font-size: 0.95rem;">
+                        Class Code: <code style="background: #edf2f7; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: var(--primary-dark);">{{ class.class_code }}</code>
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;">You haven't created any classes yet.</p>
+        {% endif %}
+
+        <br>
+
+        <h3>Classes I Joined</h3>
+
+        {% if memberships %}
+            {% for membership in memberships %}
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-title">
+                            <a href="{{ url_for('class_page', class_id=membership.class_obj.id) }}">
+                                📖 {{ membership.class_obj.name }}
+                            </a>
+                        </div>
+                        {% if membership.role == 'admin' %}
+                            <span class="badge badge-admin">Admin</span>
+                        {% else %}
+                            <span class="badge badge-member">Member</span>
+                        {% endif %}
+                    </div>
+                    <p style="margin-top: 8px; color: var(--text-muted); font-size: 0.95rem;">
+                        Class Code: <code style="background: #edf2f7; padding: 2px 8px; border-radius: 4px; font-weight: bold;">{{ membership.class_obj.class_code }}</code>
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;">You haven't joined any classes yet.</p>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
