@@ -36,6 +36,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 
+with app.app_context():
+    db.create_all()
+
+
 def calculate_distance(lat1, lon1, lat2, lon2):
     """Calculates distance between two GPS points in meters using Haversine formula."""
     R = 6371000.0  # Earth radius in meters
