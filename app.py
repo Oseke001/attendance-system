@@ -19,8 +19,17 @@ os.makedirs(os.path.join(basedir, "instance"), exist_ok=True)
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "project-002-secret-key"
+database_url = os.environ.get("DATABASE_URL")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "instance", "attendance.db")
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url.replace(
+        "postgres://", "postgresql://", 1
+    )
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
+        basedir, "instance", "attendance.db"
+    )
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
