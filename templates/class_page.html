@@ -38,17 +38,40 @@
         <!-- Announcements Section -->
         <h3>📢 Class Announcements</h3>
 
-        {% if attendance_live %}
-            <div class="alert alert-success" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px;">
+    {% if attendance_live %}
+        <div class="alert alert-success" style="margin-bottom:15px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
                 <strong>🟢 ATTENDANCE IS LIVE</strong>
                 <span>Students can sign attendance now.</span>
             </div>
-        {% elif attendance_ended %}
-            <div class="alert alert-danger" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px;">
-                <strong>🔴 ATTENDANCE ENDED</strong>
-                <span>The latest attendance session is closed.</span>
-            </div>
-        {% endif %}
+
+            {% if latest_session %}
+                <div style="text-align:center; padding:15px 0;">
+
+                    {% if membership.role == "owner" or membership.role == "admin" %}
+                        <div style="font-size:13px; opacity:0.8; margin-bottom:6px;">
+                            ATTENDANCE CODE
+                        </div>
+
+                        <div style="font-size:32px; font-weight:700; letter-spacing:6px;">
+                            {{ latest_session.code }}
+                        </div>
+                    {% endif %}
+
+                    <div style="font-size:13px; margin-top:8px; opacity:0.8;">
+                        Expires at {{ latest_session.end_time.strftime('%I:%M %p') }}
+                    </div>
+
+                </div>
+            {% endif %}
+        </div>
+
+    {% elif attendance_ended %}
+        <div class="alert alert-danger" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px;">
+            <strong>🔴 ATTENDANCE ENDED</strong>
+            <span>The latest attendance session is closed.</span>
+        </div>
+    {% endif %}
 
         {% if announcements %}
             {% for a in announcements %}
@@ -58,9 +81,17 @@
                         <span style="font-size: 0.82rem; color: var(--text-muted);">{{ a.timestamp.strftime('%b %d, %Y %I:%M %p') }}</span>
                     </div>
                     <p style="margin-bottom: 6px; font-size: 0.95rem;">{{ a.content }}</p>
-                    <p style="font-size: 0.82rem; color: var(--text-muted); margin:0;">
-                        Posted by: <strong>{{ a.author.name }}</strong>
-                    </p>
+                    <div class="announcement-footer">
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin:0;">
+                            Posted by: <strong>{{ a.author.name }}</strong>
+                        </p>
+
+                        {% if membership.role == 'owner' %}
+                            <form action="{{ url_for('delete_announcement', class_id=class_obj.id, announcement_id=a.id) }}" method="POST" onsubmit="return confirm('Delete this announcement? This cannot be undone.');">
+                                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
         {% else %}

@@ -64,6 +64,11 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
@@ -415,6 +420,38 @@ def post_announcement(class_id):
     )
 
 
+@app.route(
+    "/class/<int:class_id>/announcement/<int:announcement_id>/delete",
+    methods=["POST"]
+)
+def delete_announcement(class_id, announcement_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    class_obj = Class.query.get(class_id)
+
+    if class_obj is None:
+        return class_not_found_response()
+
+    # Only the class owner can delete announcements
+    # (the owner is also the only person who can post them)
+    if class_obj.owner_id != session["user_id"]:
+        return "Access denied."
+
+    # The announcement must belong to THIS class
+    announcement = Announcement.query.filter_by(
+        id=announcement_id,
+        class_id=class_id
+    ).first()
+
+    if announcement is not None:
+        db.session.delete(announcement)
+        db.session.commit()
+
+    return redirect(url_for("class_page", class_id=class_id))
+
+
 @app.route("/class/<int:class_id>/delete", methods=["POST"])
 def delete_class(class_id):
 
@@ -445,7 +482,6 @@ def delete_class(class_id):
     methods=["GET", "POST"]
 )
 def start_attendance(class_id):
-
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -469,19 +505,33 @@ def start_attendance(class_id):
             duration_hours = int(request.form.get("duration_hours", 1))
             duration_minutes = int(request.form.get("duration_minutes", 30))
         except (TypeError, ValueError):
-            return render_template("start_attendance.html", user=user, class_obj=class_obj,
-                                   error="Please enter a valid attendance duration.")
+            return render_template(
+                "start_attendance.html",
+                user=user,
+                class_obj=class_obj,
+                error="Please enter a valid attendance duration."
+            )
 
         if duration_hours < 0 or duration_minutes < 0 or duration_minutes > 59:
-            return render_template("start_attendance.html", user=user, class_obj=class_obj,
-                                   error="Please enter a valid attendance duration.")
+            return render_template(
+                "start_attendance.html",
+                user=user,
+                class_obj=class_obj,
+                error="Please enter a valid attendance duration."
+            )
 
         total_minutes = (duration_hours * 60) + duration_minutes
+
         if total_minutes <= 0:
-            return render_template("start_attendance.html", user=user, class_obj=class_obj,
-                                   error="Attendance duration must be greater than zero.")
+            return render_template(
+                "start_attendance.html",
+                user=user,
+                class_obj=class_obj,
+                error="Attendance duration must be greater than zero."
+            )
 
         use_location = request.form.get("use_location") == "on"
+
         latitude = longitude = radius_meters = None
 
         if use_location:
@@ -490,31 +540,47 @@ def start_attendance(class_id):
                 longitude = float(request.form.get("longitude", ""))
                 radius_meters = float(request.form.get("radius_meters", 50.0))
             except (TypeError, ValueError):
-                return render_template("start_attendance.html", user=user, class_obj=class_obj,
-                                       error="Please provide a valid classroom location and radius.")
+                return render_template(
+                    "start_attendance.html",
+                    user=user,
+                    class_obj=class_obj,
+                    error="Please provide a valid classroom location and radius."
+                )
 
             if not (-90 <= latitude <= 90) or not (-180 <= longitude <= 180) or radius_meters <= 0:
-                return render_template("start_attendance.html", user=user, class_obj=class_obj,
-                                       error="Please provide a valid classroom location and radius.")
+                return render_template(
+                    "start_attendance.html",
+                    user=user,
+                    class_obj=class_obj,
+                    error="Please provide a valid classroom location and radius."
+                )
 
             # Save this as the class's default location for future sessions.
             class_obj.latitude = latitude
             class_obj.longitude = longitude
             class_obj.radius_meters = radius_meters
 
+        # Prevent multiple active attendance sessions for the same class.
+        existing_session = AttendanceSession.query.filter_by(
+            class_id=class_id,
+            active=True
+        ).first()
+
+        if existing_session:
+            return render_template(
+                "start_attendance.html",
+                user=user,
+                class_obj=class_obj,
+                error="Attendance is already active for this class. Please end the current session before starting a new one."
+            )
+
         characters = string.ascii_uppercase + string.digits
         code = "".join(secrets.choice(characters) for _ in range(6))
 
         start_time = datetime.now()
+
         from datetime import timedelta
         end_time = start_time + timedelta(minutes=total_minutes)
-
-        # Only one attendance session can be live for a class at a time.
-        previous_sessions = AttendanceSession.query.filter_by(
-            class_id=class_id, active=True
-        ).all()
-        for previous in previous_sessions:
-            previous.active = False
 
         attendance = AttendanceSession(
             class_id=class_id,
@@ -580,6 +646,7 @@ def take_attendance(class_id):
 
     error = None
     success = None
+    status = None
 
     if request.method == "POST":
         entered_code = request.form.get("code", "").strip().upper()
@@ -659,6 +726,7 @@ def take_attendance(class_id):
             status = "Present (Location Not Required)"
             success = "✅ Attendance Approved! Location verification was not required for this session."
 
+    if status == "Present" or status == "Present (Location Not Required)":
         record = AttendanceRecord(
             class_id=class_id,
             session_id=active_session.id,
@@ -675,16 +743,21 @@ def take_attendance(class_id):
 
         return render_template(
             "take_attendance.html",
-            user=user, class_obj=class_obj,
-            error=error, success=success,
-            location_required=active_session.location_enabled
+            user=user,
+            class_obj=class_obj,
+            error=None,
+            success=success,
+            location_required=active_session.location_enabled,
+            redirect_after_success=True
         )
-
     return render_template(
-        "take_attendance.html",
-        user=user, class_obj=class_obj,
-        error=error, success=success,
-        location_required=active_session.location_enabled if active_session else False
+    "take_attendance.html",
+    user=user,
+    class_obj=class_obj,
+    error=error,
+    success=None,
+    location_required=active_session.location_enabled if active_session else False,
+    redirect_after_success=False
     )
 
 

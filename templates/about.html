@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>About | Attendance System</title>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header>
+        <nav>
+
+            <a href="/">
+                Attendance System
+            </a>
+
+            <div>
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#about-me">About Me</a>
+                <a href="#faq">FAQ</a>
+
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            </div>
+
+        </nav>
+    </header>
+
+
+    <!-- =========================
+         PAGE INTRODUCTION
+    ========================== -->
+
+    <main>
+
+        <section id="intro">
+
+            <h1>Attendance System</h1>
+
+            <p>
+                A digital classroom attendance management system
+                designed to make attendance faster, more organized,
+                and more reliable.
+            </p>
+
+            <p>
+                The system combines user accounts, class management,
+                temporary attendance codes, optional location
+                verification, and digital attendance records.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+
+        <section id="about">
+
+            <h2>About the Project</h2>
+
+            <p>
+                The Attendance System is a web-based application
+                developed to provide a digital alternative to
+                traditional paper-based classroom attendance.
+            </p>
+
+            <h3>The Problem</h3>
+
+            <p>
+                Traditional classroom attendance can be time-consuming
+                and difficult to manage. Paper attendance sheets can
+                become disorganized, records can be difficult to search,
+                and students may sometimes sign attendance for other
+                students.
+            </p>
+
+            <h3>The Solution</h3>
+
+            <p>
+                This system provides a digital way to manage classroom
+                attendance. Students join their classes using a unique
+                class code and submit attendance using a temporary
+                attendance code generated for an active session.
+            </p>
+
+            <p>
+                When location verification is enabled, the system also
+                checks whether the student's device is within the
+                permitted distance from the classroom location.
+            </p>
+
+            <h3>Main Features</h3>
+
+            <ul>
+                <li>User registration and login</li>
+                <li>Class creation and class joining</li>
+                <li>Class-specific Owner, Admin and Member roles</li>
+                <li>Temporary attendance codes</li>
+                <li>Attendance session expiry</li>
+                <li>Optional location verification</li>
+                <li>Duplicate attendance prevention</li>
+                <li>Manual attendance recording</li>
+                <li>Attendance records and history</li>
+                <li>Announcements for classes</li>
+            </ul>
+
+            <h3>Technology Used</h3>
+
+            <ul>
+                <li>Python</li>
+                <li>Flask</li>
+                <li>Flask-SQLAlchemy</li>
+                <li>PostgreSQL</li>
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>Git and GitHub</li>
+                <li>Render for deployment</li>
+            </ul>
+
+        </section>
+
+
+        <!-- =========================
+             HOW IT WORKS
+        ========================== -->
+
+        <section id="how-it-works">
+
+            <h2>How It Works</h2>
+
+            <p>
+                The system follows a simple workflow involving
+                registration, class membership, attendance sessions,
+                verification and digital record keeping.
+            </p>
+
+
+            <h3>Step 1 — Create an Account</h3>
+
+            <p>
+                A user creates an account using their name,
+                matriculation number, email address and password.
+                The matriculation number is unique and helps identify
+                the student.
+            </p>
+
+
+            <h3>Step 2 — Create or Join a Class</h3>
+
+            <p>
+                An authenticated user can create a class. The person
+                who creates the class automatically becomes the Owner.
+            </p>
+
+            <p>
+                Other users can join an existing class using its
+                unique class code and become Members.
+            </p>
+
+
+            <h3>Step 3 — Class Roles</h3>
+
+            <p>
+                Roles are specific to each class. A user can therefore
+                have different roles in different classes.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Owner:</strong>
+                    Manages the class and has the highest level of
+                    class-specific control.
+                </li>
+
+                <li>
+                    <strong>Admin:</strong>
+                    Assists with permitted class tasks and can perform
+                    manual attendance.
+                </li>
+
+                <li>
+                    <strong>Member:</strong>
+                    Joins the class and submits attendance.
+                </li>
+            </ul>
+
+
+            <h3>Step 4 — Start Attendance</h3>
+
+            <p>
+                The class Owner starts an attendance session.
+                The system generates a temporary six-character
+                attendance code.
+            </p>
+
+            <p>
+                The attendance session has an expiry time. Location
+                verification can also be enabled for the session.
+            </p>
+
+
+            <h3>Step 5 — Student Submits Attendance</h3>
+
+            <p>
+                A student opens the class and enters the active
+                attendance code.
+            </p>
+
+            <p>
+                The system checks that:
+            </p>
+
+            <ul>
+                <li>The student is logged in.</li>
+                <li>The student belongs to the class.</li>
+                <li>An active attendance session exists.</li>
+                <li>The attendance session has not expired.</li>
+                <li>The submitted code is correct.</li>
+                <li>The student has not already attended the session.</li>
+            </ul>
+
+
+            <h3>Step 6 — Location Verification</h3>
+
+            <p>
+                If location verification is enabled, the system obtains
+                the student's device location and calculates the
+                distance between the student's location and the
+                configured classroom location.
+            </p>
+
+            <p>
+                If the student is within the permitted radius,
+                attendance can be approved. If the student is outside
+                the permitted radius, the attendance submission is
+                rejected.
+            </p>
+
+
+            <h3>Step 7 — Attendance Record</h3>
+
+            <p>
+                When all required checks pass, the system creates an
+                attendance record containing information such as the
+                student, class, attendance session, timestamp, status
+                and location information when applicable.
+            </p>
+
+
+            <h3>Step 8 — Confirmation</h3>
+
+            <p>
+                The student receives a confirmation message after a
+                successful submission and is returned to the class
+                page.
+            </p>
+
+
+            <h3>What Happens When Attendance Fails?</h3>
+
+            <p>
+                The system does not create an attendance record when
+                an attendance submission fails.
+            </p>
+
+            <p>
+                Examples of failure include:
+            </p>
+
+            <ul>
+                <li>Incorrect attendance code</li>
+                <li>Expired attendance session</li>
+                <li>No active attendance session</li>
+                <li>Duplicate attendance submission</li>
+                <li>Location permission denied when required</li>
+                <li>Student outside the permitted classroom radius</li>
+                <li>User is not a member of the class</li>
+            </ul>
+
+        </section>
+
+
+        <!-- =========================
+             ABOUT ME
+        ========================== -->
+
+        <section id="about-me">
+
+            <h2>About Me</h2>
+
+            <h3>Michael O. Adeyinka</h3>
+
+            <p>
+                I am a Computer Science student interested in software
+                development and building practical technology solutions
+                to real-world problems.
+            </p>
+
+            <p>
+                I developed this Attendance System as a practical
+                project to learn and demonstrate web application
+                development, database management, authentication,
+                user roles, location-based verification and software
+                deployment.
+            </p>
+
+            <p>
+                The project has also helped me understand how different
+                parts of a software application work together, from
+                the user interface and server-side logic to database
+                storage and deployment.
+            </p>
+
+            <h3>Technologies I Used</h3>
+
+            <ul>
+                <li>Python</li>
+                <li>Flask</li>
+                <li>SQLAlchemy</li>
+                <li>PostgreSQL</li>
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>Git and GitHub</li>
+            </ul>
+
+        </section>
+
+
+        <!-- =========================
+             FAQ
+        ========================== -->
+
+        <section id="faq">
+
+            <h2>Frequently Asked Questions</h2>
+
+
+            <h3>What is the Attendance System?</h3>
+
+            <p>
+                It is a web-based platform for managing classroom
+                attendance digitally using class membership, temporary
+                attendance codes and optional location verification.
+            </p>
+
+
+            <h3>How do I join a class?</h3>
+
+            <p>
+                Log into your account and use the unique class code
+                provided by the class Owner.
+            </p>
+
+
+            <h3>Who can create a class?</h3>
+
+            <p>
+                Any authenticated user can create a class. The user
+                who creates the class automatically becomes the Owner.
+            </p>
+
+
+            <h3>Can a user belong to multiple classes?</h3>
+
+            <p>
+                Yes. A user can belong to multiple classes and can have
+                a different role in each class.
+            </p>
+
+
+            <h3>How long does an attendance code remain valid?</h3>
+
+            <p>
+                The attendance session has a configured expiry time.
+                Once the session expires, students can no longer use
+                that session to submit attendance.
+            </p>
+
+
+            <h3>Why does the system request my location?</h3>
+
+            <p>
+                Location is used when location verification is enabled.
+                It allows the system to determine whether the student
+                is within the permitted distance from the classroom.
+            </p>
+
+
+            <h3>What happens if I deny location permission?</h3>
+
+            <p>
+                If location verification is required for the session,
+                the system cannot approve attendance without the
+                required location information.
+            </p>
+
+
+            <h3>Can I submit attendance more than once?</h3>
+
+            <p>
+                No. The system checks for an existing attendance record
+                for the student and the current session before creating
+                a new record.
+            </p>
+
+
+            <h3>What happens if I enter the wrong code?</h3>
+
+            <p>
+                The submission is rejected and the system displays an
+                appropriate error message. An attendance record is not
+                created.
+            </p>
+
+
+            <h3>What happens if I am outside the classroom?</h3>
+
+            <p>
+                If location verification is enabled and your device is
+                outside the permitted classroom radius, the attendance
+                submission is rejected.
+            </p>
+
+
+            <h3>Can attendance be recorded manually?</h3>
+
+            <p>
+                Yes. Authorized Owner/Admin users can manually record
+                attendance for students who are unable to complete the
+                normal attendance process.
+            </p>
+
+
+            <h3>Can an Admin view past attendance history?</h3>
+
+            <p>
+                No. In the current system design, Admin access to past
+                attendance history is restricted. The Owner has access
+                to the relevant attendance history.
+            </p>
+
+
+            <h3>What happens when an attendance session ends?</h3>
+
+            <p>
+                The session is no longer active and students cannot use
+                its attendance code to submit attendance.
+            </p>
+
+
+            <h3>Is location verification always required?</h3>
+
+            <p>
+                No. Location verification is enabled by default for an
+                attendance session but can be disabled when appropriate.
+            </p>
+
+
+            <h3>How does the system prevent duplicate attendance?</h3>
+
+            <p>
+                Before creating a new attendance record, the system
+                checks whether the student already has a record for the
+                current attendance session.
+            </p>
+
+
+            <h3>Where is the application hosted?</h3>
+
+            <p>
+                The application is deployed online using Render, with
+                PostgreSQL used as the production database.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            Attendance System
+        </p>
+
+        <p>
+            Digital classroom attendance management.
+        </p>
+
+    </footer>
+
+</body>
+</html>

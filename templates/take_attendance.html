@@ -26,6 +26,10 @@
             <div class="alert alert-success">{{ success }}</div>
         {% endif %}
 
+        {% if redirect_after_success %}
+            <meta http-equiv="refresh" content="2;url={{ url_for('class_page', class_id=class_obj.id) }}">
+        {% endif %}
+
         <p style="color: var(--text-muted);">
             Enter the temporary 6-character code provided by your lecturer.
             {% if location_required %}
@@ -76,7 +80,7 @@
     </div>
 
     <script>
-        const locationRequired = {{ 'true' if location_required else 'false' }};
+        const locationRequired = "{{ 'true' if location_required else 'false' }}" === "true";
 
         function submitWithLocation() {
             const form = document.getElementById("attendance-form");

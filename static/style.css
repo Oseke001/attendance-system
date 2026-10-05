@@ -1,387 +1,347 @@
 /* =========================================================
-   PROJECT 002
-   DIGITAL ATTENDANCE SYSTEM
-   COMPLETE MODERN PURPLE UI
+   ATTENDANCE SYSTEM — UI REDESIGN (CSS ONLY)
+   Burnt orange / white / warm off-white / charcoal
+
+   Page detection uses :has() on <body>, so NO HTML changes
+   are needed:
+     • Landing  → body has .container > h1 and no .header-banner
+     • Login    → body has #password (no #matric_number)
+     • Register → body has #matric_number
+     • Everything else = logged-in light dashboard UI
    ========================================================= */
 
 
 /* =========================================================
-   ROOT VARIABLES
+   1. DESIGN TOKENS
+   (old variable names are kept because templates + inline
+    JS reference var(--primary), var(--danger), etc.)
    ========================================================= */
 
 :root {
-    --primary: #a855f7;
-    --primary-light: #c084fc;
-    --primary-dark: #6b21a8;
+    /* Brand — burnt orange / burnt red */
+    --brand-50:  #FFF4EC;
+    --brand-100: #FFE5D2;
+    --brand-200: #FFC9A6;
+    --brand-300: #F5A06B;
+    --brand-500: #D4561A;
+    --brand-600: #C2410C;
+    --brand-700: #A8330A;
+    --brand-800: #7C2D12;
+    --brand-900: #5A1F0B;
 
-    --purple-deep: #17001f;
-    --purple-dark: #23002f;
-    --purple-mid: #3b0754;
+    --primary:       #C2410C;
+    --primary-light: #E0622D;
+    --primary-dark:  #7C2D12;
 
-    --pink: #ec4899;
-    --pink-light: #f472b6;
+    --brand-gradient: linear-gradient(135deg, #D4561A 0%, #B53A0E 100%);
+    --brand-gradient-hover: linear-gradient(135deg, #DE6024 0%, #BF4012 100%);
 
-    --orange: #ff9a3d;
+    /* Neutrals — warm */
+    --bg-color:   #FAF7F4;
+    --surface:    #FFFFFF;
+    --surface-2:  #FBF8F5;
+    --text-color: #26211E;
+    --text-muted: #6F655E;
+    --border-color: #EBE3DC;
+    --line:        #EBE3DC;
+    --line-strong: #DDD2C9;
+    --card-bg: #FFFFFF;
 
-    --bg-color: #110014;
-    --card-bg: rgba(255, 255, 255, 0.075);
+    /* Status */
+    --success:    #15803D;
+    --success-bg: #F0FDF4;
+    --danger:     #B91C1C;
+    --danger-bg:  #FEF2F2;
+    --warning:    #B45309;
+    --warning-bg: #FFFBEB;
 
-    --text-color: #f8f5ff;
-    --text-muted: #b9a9c4;
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(60, 30, 15, .06), 0 1px 3px rgba(60, 30, 15, .04);
+    --shadow-md: 0 8px 22px rgba(60, 30, 15, .08);
+    --shadow-lg: 0 20px 50px rgba(60, 30, 15, .12);
+    --shadow:    var(--shadow-lg);
 
-    --border-color: rgba(255, 255, 255, 0.12);
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
 
-    --success: #34d399;
-    --success-bg: rgba(52, 211, 153, 0.12);
+    --ease: cubic-bezier(.22, .61, .36, 1);
 
-    --danger: #fb7185;
-    --danger-bg: rgba(251, 113, 133, 0.12);
-
-    --warning: #fbbf24;
-    --warning-bg: rgba(251, 191, 36, 0.12);
-
-    --shadow:
-        0 25px 70px rgba(0, 0, 0, 0.45);
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
 }
 
 
 /* =========================================================
-   GLOBAL RESET
+   2. RESET + BASE
    ========================================================= */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-
-html {
-    scroll-behavior: smooth;
-}
-
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
     min-height: 100vh;
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-
-    color: var(--text-color);
-
+    font-family: var(--font);
+    font-size: 16px;
     line-height: 1.6;
-
-    padding: 35px 20px;
-
-    background:
-        radial-gradient(
-            circle at 10% 15%,
-            rgba(168, 85, 247, 0.20),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 90% 85%,
-            rgba(236, 72, 153, 0.15),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #110014 0%,
-            #23002f 50%,
-            #140019 100%
-        );
-
+    color: var(--text-color);
+    padding: 20px 20px 60px;
     position: relative;
-
     overflow-x: hidden;
-}
-
-
-/* Background decorative glow */
-
-body::before {
-    content: "";
-
-    position: fixed;
-
-    width: 500px;
-    height: 500px;
-
-    border-radius: 50%;
+    -webkit-font-smoothing: antialiased;
 
     background:
-        linear-gradient(
-            135deg,
-            rgba(168, 85, 247, 0.08),
-            rgba(236, 72, 153, 0.05)
-        );
-
-    filter: blur(80px);
-
-    top: -250px;
-    left: -200px;
-
-    pointer-events: none;
-
-    z-index: -1;
+        radial-gradient(900px 420px at 100% -5%, rgba(212, 86, 26, .09), transparent 60%),
+        radial-gradient(700px 380px at -5% 0%, rgba(212, 86, 26, .05), transparent 60%),
+        var(--bg-color);
 }
 
+h1, h2, h3, h4 { color: var(--text-color); letter-spacing: -0.02em; }
 
-body::after {
-    content: "";
+h1 { font-size: 2rem;    font-weight: 800; margin-bottom: 8px; line-height: 1.2; }
+h2 { font-size: 1.55rem; font-weight: 750; margin-bottom: 14px; line-height: 1.25; }
+h3 { font-size: 1.1rem;  font-weight: 700; margin: 26px 0 12px; }
+h4 { font-size: 1.02rem; font-weight: 700; }
 
-    position: fixed;
+p { margin-bottom: 12px; }
 
-    width: 450px;
-    height: 450px;
+a {
+    color: var(--brand-600);
+    transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+a:hover { color: var(--brand-800); }
 
-    border-radius: 50%;
+hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 28px 0;
+}
+hr + hr { display: none; }   /* attendance_history has a doubled <hr> */
 
-    background: rgba(236, 72, 153, 0.07);
+strong { font-weight: 700; }
 
-    filter: blur(100px);
+::selection { background: rgba(194, 65, 12, .25); }
 
-    right: -220px;
-    bottom: -220px;
 
-    pointer-events: none;
+/* =========================================================
+   3. ANIMATIONS (subtle, one-shot — only the live pulse repeats)
+   ========================================================= */
 
-    z-index: -1;
+@keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes livePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(22, 163, 74, .30); }
+    70%  { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+@keyframes dotPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(22, 163, 74, .55); }
+    70%  { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.container { animation: rise .55s var(--ease) both; }
+
+.container .card,
+.container .alert,
+.container .table-responsive { animation: rise .5s var(--ease) both; }
+
+.container > .card:nth-of-type(2) { animation-delay: .05s; }
+.container > .card:nth-of-type(3) { animation-delay: .10s; }
+.container > .card:nth-of-type(4) { animation-delay: .15s; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 
 /* =========================================================
-   MAIN CONTAINER
+   4. MAIN CONTAINER — logged-in default
+   Dashboard / class page / history: open canvas (no big card).
+   Pages that set an inline max-width (forms, attendance
+   screens): a clean white card.
    ========================================================= */
 
 .container {
-    width: min(900px, 100%);
-
+    width: min(1040px, 100%);
     margin: 0 auto;
-
-    padding: 35px;
-
-    border-radius: 22px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.09),
-            rgba(255, 255, 255, 0.035)
-        );
-
-    border: 1px solid rgba(255, 255, 255, 0.10);
-
-    box-shadow: var(--shadow);
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
+    padding: 0;
     position: relative;
+}
 
+.container[style*="max-width"] {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+    padding: 34px;
     overflow: hidden;
 }
 
-
-/* Decorative container glow */
-
-.container::before {
-    content: "";
-
-    position: absolute;
-
-    width: 220px;
-    height: 220px;
-
-    border-radius: 50%;
-
-    border: 1px solid rgba(192, 132, 252, 0.10);
-
-    right: -100px;
-    top: -100px;
-
-    pointer-events: none;
-}
-
-
-.container::after {
-    content: "";
-
-    position: absolute;
-
-    width: 180px;
-    height: 180px;
-
-    border-radius: 45%;
-
-    border: 1px solid rgba(236, 72, 153, 0.08);
-
-    left: -100px;
-    bottom: -90px;
-
-    transform: rotate(35deg);
-
-    pointer-events: none;
+/* small brand label on card pages that have no nav strip
+   (create class, join class) */
+.container[style*="max-width"]:not(:has(.header-banner)):not(:has(.alert-danger:only-child))::before {
+    content: "ATTENDANCE SYSTEM";
+    display: block;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .24em;
+    color: var(--brand-600);
+    margin-bottom: 18px;
 }
 
 
 /* =========================================================
-   HEADINGS
-   ========================================================= */
-
-h1 {
-    font-size: 2rem;
-
-    color: #ffffff;
-
-    margin-bottom: 12px;
-
-    font-weight: 750;
-
-    letter-spacing: -0.5px;
-}
-
-
-h2 {
-    font-size: 1.55rem;
-
-    color: #ffffff;
-
-    margin-bottom: 20px;
-
-    font-weight: 700;
-}
-
-
-h3 {
-    font-size: 1.15rem;
-
-    color: #ffffff;
-
-    margin: 25px 0 12px;
-
-    font-weight: 650;
-}
-
-
-p {
-    margin-bottom: 12px;
-}
-
-
-a {
-    color: var(--primary-light);
-
-    transition:
-        color 0.2s ease,
-        opacity 0.2s ease;
-}
-
-
-a:hover {
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   HEADER
+   5. NAVIGATION (.header-banner)
    ========================================================= */
 
 .header-banner {
     display: flex;
-
-    justify-content: space-between;
-
     align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px 16px;
 
-    gap: 15px;
+    position: sticky;
+    top: 12px;
+    z-index: 50;
 
-    background:
-        rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, .9);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
 
-    border:
+    padding: 11px 16px 11px 20px;
+    margin-bottom: 26px;
 
-        1px solid rgba(255, 255, 255, 0.08);
-
-    padding: 14px 18px;
-
-    border-radius: 14px;
-
-    margin-bottom: 28px;
-
-    font-size: 0.9rem;
-
+    font-size: .88rem;
     color: var(--text-muted);
-
-    backdrop-filter: blur(10px);
 }
 
-
-.header-banner strong {
-    color: #ffffff;
+/* Brand mark (text + dot) */
+.header-banner::before {
+    content: "ATTENDANCE SYSTEM";
+    margin-right: auto;
+    padding-left: 26px;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .2em;
+    color: var(--brand-700);
+    white-space: nowrap;
+    background:
+        radial-gradient(circle at 10px 50%, var(--brand-600) 0 5px, transparent 5.5px),
+        radial-gradient(circle at 10px 50%, rgba(194, 65, 12, .18) 0 9px, transparent 9.5px);
+    background-repeat: no-repeat;
 }
 
+.header-banner > div { min-width: 0; overflow-wrap: anywhere; }
+.header-banner strong { color: var(--text-color); }
 
 .header-banner a {
-    color: var(--pink-light);
-
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--brand-700);
     font-weight: 650;
-
+    font-size: .85rem;
     text-decoration: none;
+    background: #fff;
 }
-
-
 .header-banner a:hover {
-    color: #ffffff;
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+    color: #fff;
 }
 
-
-/* =========================================================
-   HORIZONTAL LINE
-   ========================================================= */
-
-hr {
+/* Nav embedded inside a white card page → flat strip across card top */
+.container[style*="max-width"] > .header-banner {
+    position: static;
+    margin: -34px -34px 28px;
     border: none;
-
-    border-top:
-        1px solid rgba(255, 255, 255, 0.09);
-
-    margin: 25px 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--surface-2);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    padding: 14px 34px;
+    justify-content: space-between;
 }
+/* narrow card → brand + logout on row 1, user info on row 2 */
+.container[style*="max-width"] > .header-banner::before { margin-right: 0; }
+.container[style*="max-width"] > .header-banner > div:last-child  { order: 1; }
+.container[style*="max-width"] > .header-banner > div:first-child { order: 2; flex-basis: 100%; font-size: .82rem; }
 
 
 /* =========================================================
-   FORMS
+   6. SECTION HEADINGS
    ========================================================= */
 
-form {
-    margin-top: 15px;
+/* "Classes I Own", "Control Panel", "Class Roster" … */
+.container > h3:not([style]) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    margin: 34px 0 14px;
+}
+.container > h3:not([style])::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--brand-gradient);
+    flex: none;
 }
 
-
-.form-group {
+/* Class-name subtitle on form pages → brand pill */
+.container > h3[style*="var(--primary)"] {
+    display: inline-block;
+    font-size: .88rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    padding: 5px 14px;
     margin-bottom: 20px;
+    border-radius: 999px;
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
 }
 
+.container > h2 + h3[style*="var(--primary)"] { margin-top: -4px !important; }
+
+
+/* =========================================================
+   7. FORMS
+   ========================================================= */
+
+form { margin-top: 14px; }
+.form-group { margin-bottom: 18px; }
 
 label {
     display: block;
-
-    font-size: 0.84rem;
-
-    font-weight: 600;
-
-    color: rgba(255, 255, 255, 0.78);
-
-    margin-bottom: 8px;
+    font-size: .84rem;
+    font-weight: 650;
+    color: var(--text-color);
+    margin-bottom: 7px;
 }
-
 
 input[type="text"],
 input[type="email"],
@@ -390,1099 +350,1519 @@ input[type="number"],
 select,
 textarea {
     width: 100%;
-
     min-height: 48px;
-
-    padding: 12px 16px;
-
+    padding: 12px 15px;
     font-family: inherit;
-
-    font-size: 0.94rem;
-
-    color: #ffffff;
-
-    background:
-        rgba(255, 255, 255, 0.075);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.11);
-
-    border-radius: 12px;
-
+    font-size: .96rem;
+    color: var(--text-color);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
     outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease,
-        transform 0.2s ease;
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
 }
 
+input:hover, select:hover, textarea:hover { border-color: #CDBFB3; }
 
+input:focus, select:focus, textarea:focus {
+    border-color: var(--brand-600);
+    box-shadow: 0 0 0 4px rgba(194, 65, 12, .14);
+}
+
+input::placeholder, textarea::placeholder { color: #A89C93; }
+
+/* inline style on the announcement textarea → needs !important */
 textarea {
-    min-height: 120px;
-
+    min-height: 130px;
     resize: vertical;
+    line-height: 1.5;
+    padding: 13px 15px !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius-sm) !important;
+    font-size: .96rem !important;
 }
-
-
-input::placeholder,
-textarea::placeholder {
-    color: rgba(255, 255, 255, 0.34);
-}
-
-
-input:focus,
-select:focus,
-textarea:focus {
-    border-color:
-        rgba(192, 132, 252, 0.75);
-
-    background:
-        rgba(255, 255, 255, 0.10);
-
-    box-shadow:
-        0 0 0 3px rgba(168, 85, 247, 0.12);
-
-    transform: translateY(-1px);
-}
-
-
-/* Select */
+textarea:focus { border-color: var(--brand-600) !important; }
 
 select {
     appearance: none;
-
+    -webkit-appearance: none;
     cursor: pointer;
+    padding-right: 42px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C2410C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
 }
 
-
-select option {
-    background: #280033;
-
-    color: white;
+input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--brand-600);
+    cursor: pointer;
+    flex: none;
 }
+
+/* password show/hide toggle */
+button[title="Toggle Password Visibility"] {
+    opacity: .6;
+    transition: opacity .2s ease, transform .2s ease;
+    border-radius: 8px;
+    padding: 4px 6px;
+}
+button[title="Toggle Password Visibility"]:hover { opacity: 1; }
 
 
 /* =========================================================
-   BUTTONS
+   8. BUTTONS
    ========================================================= */
 
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-    padding: 11px 21px;
-
-    min-height: 45px;
+    min-height: 46px;
+    padding: 11px 22px;
+    margin: 0 8px 8px 0;
 
     font-family: inherit;
-
-    font-size: 0.92rem;
-
+    font-size: .93rem;
     font-weight: 650;
-
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            90deg,
-            #a855f7,
-            #ec4899
-        );
-
-    border: none;
-
-    border-radius: 12px;
-
-    cursor: pointer;
-
+    line-height: 1.2;
+    text-align: center;
     text-decoration: none;
 
-    text-align: center;
+    color: #fff;
+    background: var(--brand-gradient);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
 
-    margin-right: 8px;
-
-    margin-bottom: 8px;
-
-    box-shadow:
-        0 8px 22px rgba(168, 85, 247, 0.20);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
+    box-shadow: 0 6px 16px rgba(181, 58, 14, .24);
+    transition: transform .2s var(--ease), box-shadow .2s var(--ease),
+                background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease);
 }
-
 
 .btn:hover {
-    color: white;
-
+    color: #fff;
+    background: var(--brand-gradient-hover);
     transform: translateY(-2px);
-
-    box-shadow:
-        0 12px 28px rgba(168, 85, 247, 0.30);
+    box-shadow: 0 12px 26px rgba(181, 58, 14, .30);
 }
+.btn:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(181, 58, 14, .25); }
 
-
-.btn:active {
-    transform: translateY(0);
-}
-
-
-/* Secondary */
-
-.btn-secondary {
-    background:
-        rgba(255, 255, 255, 0.09);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.12);
-
+.btn:disabled,
+.btn[disabled] {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
     box-shadow: none;
 }
 
+/* full-width buttons (inline width:100%) must not overflow */
+.btn[style*="width: 100%"],
+.btn[style*="width:100%"] { display: flex; margin-right: 0; }
 
+/* Secondary */
+.btn-secondary {
+    color: var(--text-color);
+    background: #fff;
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-sm);
+}
 .btn-secondary:hover {
-    background:
-        rgba(255, 255, 255, 0.15);
-
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.20);
+    color: var(--brand-700);
+    background: var(--brand-50);
+    border-color: var(--brand-300);
+    box-shadow: var(--shadow-md);
 }
 
+/* Primary action (kept as brand colour — green is reserved for status) */
+.btn-success { background: var(--brand-gradient); }
 
-/* Success */
-
-.btn-success {
-    background:
-        linear-gradient(
-            90deg,
-            #10b981,
-            #34d399
-        );
-
-    box-shadow:
-        0 8px 22px rgba(16, 185, 129, 0.20);
-}
-
-
-.btn-success:hover {
-    background:
-        linear-gradient(
-            90deg,
-            #059669,
-            #10b981
-        );
-}
-
-
-/* Danger */
-
+/* Danger — outlined, fills on hover */
 .btn-danger {
-    background:
-        linear-gradient(
-            90deg,
-            #ef4444,
-            #fb7185
-        );
-
-    box-shadow:
-        0 8px 22px rgba(239, 68, 68, 0.20);
+    color: var(--danger);
+    background: #fff;
+    border-color: #F1C0C0;
+    box-shadow: none;
+}
+.btn-danger:hover {
+    color: #fff;
+    background: var(--danger);
+    border-color: var(--danger);
+    box-shadow: 0 8px 20px rgba(185, 28, 28, .25);
 }
 
+/* Buttons inside tables (role management) */
+td .btn {
+    min-height: 34px !important;
+    padding: 6px 12px !important;
+    font-size: .8rem !important;
+    margin: 0 !important;
+    width: auto !important;
+    border-radius: 10px;
+    box-shadow: none;
+    white-space: nowrap;
+}
 
-.btn-danger:hover {
-    background:
-        linear-gradient(
-            90deg,
-            #dc2626,
-            #ef4444
-        );
+/* Action rows (dashboard buttons + class control panel) */
+.container > div[style*="margin-bottom: 25px"] {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    align-items: center;
+}
+.container > div[style*="margin-bottom: 25px"] .btn { margin: 0; }
+
+/* Class control panel = a clear action card */
+.container > div[style*="flex-wrap: wrap"][style*="margin-bottom: 25px"] {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+}
+.container > div[style*="flex-wrap: wrap"][style*="margin-bottom: 25px"] > .btn-success,
+.container > div[style*="flex-wrap: wrap"][style*="margin-bottom: 25px"] > a.btn:first-child {
+    min-height: 52px;
+    padding: 14px 26px;
+    font-size: 1rem;
 }
 
 
 /* =========================================================
-   CARDS
+   9. CARDS
    ========================================================= */
 
 .card {
-    background:
-        rgba(255, 255, 255, 0.055);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.09);
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    margin-bottom: 16px;
-
-    transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s var(--ease);
 }
 
+.card:hover { box-shadow: var(--shadow-md); }
 
-.card:hover {
-    transform: translateY(-2px);
-
-    background:
-        rgba(255, 255, 255, 0.075);
-
-    border-color:
-        rgba(192, 132, 252, 0.25);
+/* Dashboard class cards */
+.container > .card:not([style]) {
+    overflow: hidden;
+    padding-left: 26px;
 }
-
+.container > .card:not([style])::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--brand-gradient);
+    opacity: .85;
+}
+.container > .card:not([style]):hover {
+    transform: translateY(-3px);
+    border-color: var(--brand-200);
+}
 
 .card-title {
-    font-size: 1.12rem;
-
-    font-weight: 700;
-
-    color: #ffffff;
-
-    margin-bottom: 6px;
+    font-size: 1.1rem;
+    font-weight: 750;
+    color: var(--text-color);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
 }
+.card-title a { color: var(--text-color); text-decoration: none; }
+.card-title a:hover { color: var(--brand-600); }
 
+/* Dashboard card header row — keep badge from squashing title on mobile */
+.card > div[style*="justify-content: space-between"] { gap: 12px; flex-wrap: wrap; }
 
-.card-title a {
-    color: #ffffff;
+/* Cards inside forms (start attendance steps) — flat, no hover movement */
+form .card { background: var(--surface-2); box-shadow: none; padding: 22px; }
+form .card h3 { font-size: 1.02rem; margin-bottom: 8px; }
+form .card:hover { box-shadow: none; }
 
-    text-decoration: none;
+/* Announcement cards */
+.card[style*="border-left"] {
+    background: #fff !important;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--brand-600) !important;
+    padding: 20px 22px 18px;
+    overflow: visible;
 }
-
-
-.card-title a:hover {
-    color: var(--primary-light);
+.card[style*="border-left"]::before {
+    content: "Announcement";
+    position: static;
+    display: block;
+    width: auto; height: auto;
+    background: none;
+    opacity: 1;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--brand-600);
+    margin-bottom: 8px;
+}
+.card[style*="border-left"] h4 { font-size: 1.1rem; line-height: 1.3; }
+.card[style*="border-left"] > div { flex-wrap: wrap; gap: 4px 12px; }
+.card[style*="border-left"] p { line-height: 1.6; color: var(--text-color); }
+/* footer row: "Posted by" + owner-only Delete button */
+.announcement-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+.announcement-footer form { margin: 0; }
+.announcement-footer .btn {
+    min-height: 32px;
+    padding: 5px 13px;
+    margin: 0;
+    font-size: .78rem;
+    border-radius: 10px;
+    width: auto;
+}
+/* old markup without the footer wrapper */
+.card[style*="border-left"] > p:last-child {
+    padding-top: 10px;
+    margin-top: 6px !important;
+    border-top: 1px solid var(--line);
 }
 
 
 /* =========================================================
-   BADGES
+   10. CLASS CODE (<code>) — inline styles need !important
+   ========================================================= */
+
+code {
+    display: inline-block;
+    font-family: var(--mono);
+    font-weight: 700 !important;
+    letter-spacing: .12em;
+    color: var(--brand-800) !important;
+    background: var(--brand-50) !important;
+    border: 1px solid var(--brand-100);
+    border-radius: 8px !important;
+    padding: 3px 10px !important;
+}
+
+
+/* =========================================================
+   11. HERO HEADER (class page + attendance sheet)
+   ========================================================= */
+
+.container > div[style*="align-items: flex-start"] {
+    position: relative;
+    overflow: hidden;
+    gap: 18px !important;
+    align-items: center !important;
+
+    background:
+        radial-gradient(520px 220px at 100% 0%, var(--brand-50), transparent 70%),
+        var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 28px 30px;
+}
+.container > div[style*="align-items: flex-start"]::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: var(--brand-gradient);
+}
+.container > div[style*="align-items: flex-start"] h1 {
+    font-size: clamp(1.55rem, 3.6vw, 2.3rem);
+    margin-bottom: 10px;
+}
+.container > div[style*="align-items: flex-start"] h2 {
+    font-size: 1.12rem;
+    margin: 0 !important;
+}
+.container > div[style*="align-items: flex-start"] p { margin: 0; }
+
+/* hero is followed by an <hr> — replace with spacing */
+.container > div[style*="align-items: flex-start"] + hr {
+    border-color: transparent;
+    margin: 6px 0 0;
+}
+
+
+/* =========================================================
+   12. BADGES — roles + status
    ========================================================= */
 
 .badge {
-    display: inline-block;
-
-    padding: 4px 11px;
-
-    font-size: 0.75rem;
-
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    font-size: .75rem;
     font-weight: 700;
-
-    border-radius: 20px;
-
-    letter-spacing: 0.2px;
+    line-height: 1.5;
+    border-radius: 999px;
+    letter-spacing: .02em;
+    white-space: nowrap;
 }
 
-
+/* Owner — strongest */
 .badge-owner {
-    background:
-        rgba(168, 85, 247, 0.16);
-
-    color:
-        #d8b4fe;
-
-    border:
-        1px solid rgba(168, 85, 247, 0.30);
+    color: #fff;
+    background: var(--brand-gradient);
+    border: 1px solid transparent;
+    box-shadow: 0 3px 8px rgba(181, 58, 14, .25);
 }
-
-
+/* Admin — warm amber */
 .badge-admin {
-    background:
-        rgba(52, 211, 153, 0.12);
-
-    color:
-        #6ee7b7;
-
-    border:
-        1px solid rgba(52, 211, 153, 0.25);
+    color: #854D0E;
+    background: #FEF3C7;
+    border: 1px solid #F8DB8B;
 }
-
-
+/* Member — neutral */
 .badge-member {
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    color:
-        #d1c4d8;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.12);
+    color: #5F554E;
+    background: #F4EFEA;
+    border: 1px solid var(--line-strong);
 }
 
-
+/* Attendance status */
 .badge-present {
-    background:
-        rgba(52, 211, 153, 0.12);
-
-    color:
-        #6ee7b7;
+    color: #14532D;
+    background: #DCFCE7;
+    border: 1px solid #A7E3BE;
 }
-
-
 .badge-denied {
-    background:
-        rgba(251, 113, 133, 0.12);
-
-    color:
-        #fda4af;
+    color: #991B1B;
+    background: #FEE2E2;
+    border: 1px solid #F6BDBD;
 }
-
-
 .badge-warning {
-    background:
-        rgba(251, 191, 36, 0.12);
-
-    color:
-        #fcd34d;
+    color: #854D0E;
+    background: #FEF3C7;
+    border: 1px solid #F8DB8B;
+}
+.badge-present::before,
+.badge-denied::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
 }
 
 
 /* =========================================================
-   ALERTS
+   13. ALERTS
    ========================================================= */
 
 .alert {
-    padding: 14px 16px;
-
-    border-radius: 12px;
-
+    padding: 14px 18px;
+    border-radius: 14px;
     margin-bottom: 20px;
-
-    font-size: 0.9rem;
-
+    font-size: .92rem;
     font-weight: 500;
-
+    line-height: 1.5;
     border: 1px solid transparent;
+    border-left-width: 4px;
+}
+.alert-success { background: var(--success-bg); color: #14532D; border-color: #BBF7D0; border-left-color: #16A34A; }
+.alert-danger  { background: var(--danger-bg);  color: #7F1D1D; border-color: #FECACA; border-left-color: #DC2626; }
+.alert-warning { background: var(--warning-bg); color: #78350F; border-color: #FDE68A; border-left-color: #D97706; }
+
+/* ---- Live attendance banner on the class page ---- */
+.alert-success[style*="margin-bottom:15px"] {
+    background: linear-gradient(135deg, #ECFDF3 0%, #F7FEF9 100%);
+    border: 1px solid #A7E3BE;
+    border-left: 5px solid #16A34A;
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 18px !important;
+    color: #14532D;
+    animation: rise .5s var(--ease) both, livePulse 2.6s ease-out 1s infinite;
+}
+.alert-success[style*="margin-bottom:15px"] > div:first-child {
+    flex-wrap: wrap;
+    gap: 6px 14px !important;
+    margin-bottom: 4px !important;
+}
+.alert-success[style*="margin-bottom:15px"] strong {
+    font-size: .95rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    color: #166534;
+}
+.alert-success[style*="margin-bottom:15px"] > div:first-child > span {
+    font-size: .9rem;
+    color: #166534;
 }
 
-
-.alert-success {
-    background:
-        rgba(52, 211, 153, 0.10);
-
-    color:
-        #6ee7b7;
-
-    border-color:
-        rgba(52, 211, 153, 0.25);
+/* Code + expiry block */
+.alert-success[style*="margin-bottom:15px"] > div[style*="text-align:center"] {
+    padding: 14px 0 4px !important;
+}
+.alert-success[style*="margin-bottom:15px"] div[style*="font-size:13px"] {
+    font-size: .72rem !important;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: .85 !important;
+}
+.alert-success[style*="margin-bottom:15px"] div[style*="letter-spacing:6px"] {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(1.9rem, 7vw, 2.7rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: .24em !important;
+    padding: 10px 14px 10px 26px;
+    margin-top: 4px;
+    color: var(--brand-800);
+    background: #fff;
+    border: 1px solid #A7E3BE;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+}
+.alert-success[style*="margin-bottom:15px"] div[style*="margin-top:8px"] {
+    margin-top: 12px !important;
+    font-size: .85rem !important;
+    font-weight: 600;
 }
 
-
-.alert-danger {
-    background:
-        rgba(251, 113, 133, 0.10);
-
-    color:
-        #fda4af;
-
-    border-color:
-        rgba(251, 113, 133, 0.25);
+/* ---- Attendance ended ---- */
+.alert-danger[style*="display:flex"] {
+    flex-wrap: wrap;
+    gap: 4px 14px !important;
+    background: #FEF2F2;
+    border: 1px solid #F3C2C2;
+    border-left: 5px solid #B42318;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 18px !important;
 }
+.alert-danger[style*="display:flex"] strong { letter-spacing: .06em; }
 
 
-.alert-warning {
-    background:
-        rgba(251, 191, 36, 0.10);
+/* =========================================================
+   14. EMPTY STATES
+   ========================================================= */
 
-    color:
-        #fcd34d;
-
-    border-color:
-        rgba(251, 191, 36, 0.25);
+p[style*="font-style: italic"] {
+    font-style: normal !important;
+    text-align: center;
+    color: var(--text-muted) !important;
+    font-size: .95rem;
+    padding: 28px 20px;
+    margin: 4px 0 0;
+    background: var(--surface);
+    border: 1.5px dashed var(--line-strong);
+    border-radius: var(--radius-md);
+}
+p[style*="font-style: italic"]::before {
+    content: "📭";
+    display: block;
+    font-size: 1.7rem;
+    line-height: 1;
+    margin-bottom: 8px;
+    filter: grayscale(.25);
 }
 
 
 /* =========================================================
-   TABLES
+   15. TABLES
    ========================================================= */
 
 .table-responsive {
     overflow-x: auto;
-
-    margin-top: 18px;
-
-    border-radius: 14px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.08);
+    -webkit-overflow-scrolling: touch;
+    margin-top: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
 }
 
+table { width: 100%; border-collapse: collapse; }
 
-table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    margin-bottom: 0;
-
-    background:
-        rgba(255, 255, 255, 0.035);
-}
-
-
-th,
-td {
-    padding: 14px 16px;
-
+th, td {
+    padding: 14px 18px;
     text-align: left;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    vertical-align: middle;
+    border-bottom: 1px solid var(--line);
     white-space: nowrap;
 }
 
-
 th {
-    background:
-        rgba(168, 85, 247, 0.13);
-
-    color:
-        #e9d5ff;
-
-    font-size: 0.83rem;
-
-    font-weight: 700;
+    background: var(--surface-2);
+    color: #7A6B60;
+    font-size: .72rem;
+    font-weight: 750;
+    letter-spacing: .08em;
+    text-transform: uppercase;
 }
 
+td { color: var(--text-color); font-size: .9rem; }
 
-td {
-    color:
-        rgba(255, 255, 255, 0.75);
+tbody tr { transition: background .15s ease; }
+tbody tr:hover { background: var(--brand-50); }
+tbody tr:last-child td { border-bottom: none; }
 
-    font-size: 0.88rem;
-}
-
-
-tr:hover {
-    background:
-        rgba(255, 255, 255, 0.045);
-}
-
-
-tr:last-child td {
-    border-bottom: none;
-}
+.table-responsive:focus-visible { outline: 3px solid rgba(194, 65, 12, .35); }
 
 
 /* =========================================================
-   PROGRESS BAR
+   16. PROGRESS BAR  (inline background-color sets red/green)
    ========================================================= */
 
 .progress-container {
     width: 100%;
-
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    border-radius: 20px;
-
-    overflow: hidden;
-
-    height: 12px;
-
+    height: 10px;
     margin: 12px 0;
+    background: #F0E8E1;
+    border-radius: 999px;
+    overflow: hidden;
 }
-
-
 .progress-bar {
     height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #a855f7,
-            #ec4899
-        );
-
     width: 0%;
-
-    transition:
-        width 0.4s ease;
-
-    border-radius: 20px;
+    background-color: var(--brand-600);
+    border-radius: 999px;
+    transition: width .5s var(--ease);
 }
 
 
 /* =========================================================
-   ATTENDANCE TIMER
+   17. ATTENDANCE — LIVE SESSION SCREEN (attendance_started)
    ========================================================= */
+
+body:has(.timer-box) .container > h1 {
+    text-align: center;
+    font-size: clamp(1.45rem, 4vw, 1.9rem);
+}
+body:has(.timer-box) .container > h2 {
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--brand-700);
+    margin-bottom: 18px;
+}
 
 .timer-box {
+    position: relative;
+    overflow: hidden;
     text-align: center;
-
     background:
-        linear-gradient(
-            145deg,
-            rgba(168, 85, 247, 0.13),
-            rgba(236, 72, 153, 0.08)
-        );
-
-    border:
-        1px solid rgba(192, 132, 252, 0.25);
-
-    border-radius: 20px;
-
-    padding: 30px 20px;
-
-    margin: 25px 0;
-
-    box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.18);
+        radial-gradient(420px 200px at 50% 0%, var(--brand-50), transparent 75%),
+        var(--surface);
+    border: 1px solid var(--brand-100);
+    border-radius: 24px;
+    padding: 34px 22px 26px;
+    margin: 22px 0;
+    box-shadow: var(--shadow-lg);
+}
+.timer-box::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--brand-gradient);
 }
 
+/* "● ATTENDANCE CODE" label with live pulsing dot */
+.timer-box > p:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: .74rem !important;
+    letter-spacing: .16em !important;
+    color: var(--brand-700) !important;
+    margin-bottom: 14px;
+}
+.timer-box > p:first-child::before {
+    content: "";
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #16A34A;
+    animation: dotPulse 2s ease-out infinite;
+}
 
 .timer-code {
-    font-size: 2.8rem;
-
-    font-weight: 850;
-
-    letter-spacing: 7px;
-
-    color: #ffffff;
-
-    text-shadow:
-        0 0 25px rgba(192, 132, 252, 0.45);
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: clamp(2rem, 9vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: .26em;
+    padding: 12px 12px 12px 30px;
+    color: var(--brand-800);
+    background: #fff;
+    border: 2px dashed var(--brand-200);
+    border-radius: 18px;
 }
 
+.timer-box > p:nth-of-type(2) { margin-top: 14px; font-size: .92rem; }
+
+.timer-box hr { margin: 22px auto !important; max-width: 340px; }
+
+.timer-box > p:nth-of-type(3) {
+    font-size: .74rem;
+    font-weight: 750 !important;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text-muted) !important;
+    margin-bottom: 4px;
+}
 
 .timer-clock {
-    font-size: 1.5rem;
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 8vw, 3rem);
+    font-weight: 800;
+    letter-spacing: .04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-color);
+    line-height: 1.2;
+    margin-top: 0;
+}
 
-    font-weight: 700;
-
-    color:
-        #f9a8d4;
-
-    margin-top: 8px;
+.timer-box > p:last-child {
+    display: inline-block;
+    margin: 16px 0 0 !important;
+    padding: 7px 14px;
+    font-size: .85rem;
+    color: var(--text-color) !important;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
 }
 
 
 /* =========================================================
-   MAP
+   18. ATTENDANCE — STUDENT CHECK-IN SCREEN (take_attendance)
    ========================================================= */
+
+/* Instruction + location notice = clear callout */
+body:has(#attendance-form) .container > p {
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+    border-left: 4px solid var(--brand-600);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: .93rem;
+    line-height: 1.55;
+    margin-bottom: 8px;
+}
+
+body:has(#attendance-form) #code {
+    min-height: 70px;
+    font-family: var(--mono);
+    font-size: 1.7rem !important;
+    letter-spacing: .3em !important;
+    border: 2px solid var(--line-strong);
+    border-radius: 16px;
+    background: #fff;
+    padding: 12px 12px 12px calc(12px + .3em);
+}
+body:has(#attendance-form) #code:focus {
+    border-color: var(--brand-600);
+    box-shadow: 0 0 0 5px rgba(194, 65, 12, .14);
+}
+body:has(#attendance-form) #code::placeholder {
+    font-family: var(--font);
+    font-size: .95rem;
+    letter-spacing: 0;
+    font-weight: 500;
+}
+
+body:has(#attendance-form) #submit-btn {
+    min-height: 56px;
+    font-size: 1.02rem !important;
+    padding: 14px 24px !important;
+}
+
+/* GPS status (colour is set by inline JS, so derive tint from currentColor) */
+#gps-status,
+#location-status {
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: .92rem;
+    line-height: 1.45;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+}
+@supports (background: color-mix(in srgb, red, blue)) {
+    #gps-status,
+    #location-status {
+        background: color-mix(in srgb, currentColor 8%, white);
+        border-color: color-mix(in srgb, currentColor 28%, white);
+    }
+}
+
+/* Success / error with icons on the check-in screen */
+body:has(#attendance-form) .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: .96rem;
+    padding: 16px 18px;
+}
+body:has(#attendance-form) .alert::before {
+    flex: none;
+    width: 24px; height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: .8rem;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 1px;
+}
+body:has(#attendance-form) .alert-success::before { content: "✓"; background: #16A34A; }
+body:has(#attendance-form) .alert-danger::before  { content: "✕"; background: #DC2626; }
+body:has(#attendance-form) .alert-warning::before { content: "!"; background: #D97706; }
+
+
+/* =========================================================
+   19. START ATTENDANCE (instructor setup form)
+   ========================================================= */
+
+#duration-preview {
+    display: inline-block;
+    padding: 6px 14px;
+    margin-top: 4px;
+    font-size: .88rem;
+    color: var(--brand-800);
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+    border-radius: 999px;
+}
+
+label[style*="display:flex"] {
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+#location-fields { margin-top: 6px; }
 
 #map {
     width: 100%;
-
     height: 350px;
-
-    border-radius: 16px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.12);
-
     margin-top: 15px;
-
-    box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.25);
-
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
 }
 
 
 /* =========================================================
-   CODE ELEMENT
+   20. LANDING + LOGIN + REGISTER  (burnt-orange glass pages)
    ========================================================= */
 
-code {
-    background:
-        rgba(168, 85, 247, 0.13) !important;
-
-    color:
-        #d8b4fe !important;
-
-    border:
-        1px solid rgba(168, 85, 247, 0.18);
-
-    border-radius: 6px;
-
-    padding: 3px 8px;
-
-    font-family:
-        "Courier New",
-        monospace;
-}
-
-
-/* =========================================================
-   LOGIN PAGE
-   CSS-ONLY REDESIGN
-   No HTML changes required
-   ========================================================= */
-
-
-/*
-   The login HTML uses:
-
-   .container
-   h2
-   .form-group
-   input
-   .btn
-
-   We use those existing elements to create the
-   new visual style.
-*/
-
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) {
-    padding: 30px;
-
+/* ---- Full-page burnt orange / red background ---- */
+body:has(#password),
+body:has(.container > h1):not(:has(.header-banner)) {
     display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 100vh;
-}
-
-
-/* Make login container wider */
-
-/* body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
-    width: min(1050px, 95vw);
-
-    max-width: 1050px !important;
-
-    min-height: 600px;
-
-    padding: 60px 60px 60px 52%;
-
-    display: flex;
-
     flex-direction: column;
-
+    align-items: center;
     justify-content: center;
+    padding: 32px 20px;
+    color: #fff;
 
-    position: relative;
+    background:
+        radial-gradient(800px 520px at 12% 8%,  rgba(255, 196, 140, .50), transparent 62%),
+        radial-gradient(700px 520px at 92% 96%, rgba(120, 22, 6, .55),  transparent 62%),
+        radial-gradient(520px 360px at 85% 12%, rgba(255, 140, 80, .30), transparent 65%),
+        linear-gradient(135deg, #D4561A 0%, #B73B0F 48%, #8A2209 100%);
+}
 
+/* Soft decorative rings behind the card */
+body:has(#password)::before,
+body:has(.container > h1):not(:has(.header-banner))::before {
+    content: "";
+    position: fixed;
+    width: 720px; height: 720px;
+    left: -260px; bottom: -340px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .13);
+    box-shadow:
+        0 0 0 70px  rgba(255, 255, 255, .025),
+        0 0 0 140px rgba(255, 255, 255, .02);
+    pointer-events: none;
+    z-index: -1;
+}
+body:has(#password)::after,
+body:has(.container > h1):not(:has(.header-banner))::after {
+    content: "";
+    position: fixed;
+    width: 420px; height: 420px;
+    right: -150px; top: -150px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .16);
+    box-shadow: 0 0 0 55px rgba(255, 255, 255, .03);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ---- Glass card ---- */
+body:has(#password) .container,
+body:has(.container > h1):not(:has(.header-banner)) .container {
+    width: 100%;
+    margin: 0 auto !important;
     overflow: hidden;
 
     background:
-        linear-gradient(
-            135deg,
-            rgba(71, 0, 85, 0.94),
-            rgba(30, 0, 43, 0.96)
-        );
-
+        radial-gradient(420px 260px at 100% 0%, rgba(255, 255, 255, .20), transparent 70%),
+        linear-gradient(145deg, rgba(255, 255, 255, .19), rgba(255, 255, 255, .08));
+    border: 1px solid rgba(255, 255, 255, .32);
+    border-radius: 28px;
     box-shadow:
-        0 35px 100px rgba(0, 0, 0, 0.55);
-} */
+        0 30px 80px rgba(70, 14, 0, .38),
+        inset 0 1px 0 rgba(255, 255, 255, .38);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+    padding: 42px 40px;
+}
+
+body:has(#password) .container h1,
+body:has(#password) .container h2,
+body:has(.container > h1):not(:has(.header-banner)) h1 {
+    color: #fff;
+}
 
 
-/* Left welcome panel */
+/* ---------- LANDING ---------- */
 
-/* body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
-    content:
-        "WELCOME! \A\A"
-        "Digital Attendance System\A"
-        "Manage your classes and attendance\A"
-        "easily, securely and efficiently.";
+body:has(.container > h1):not(:has(.header-banner)) .container {
+    max-width: 680px;
+    text-align: center;
+    padding: 56px 44px 40px !important;
+}
 
-    white-space: pre-line;
+/* 🧾 emoji → glass logo badge */
+body:has(.container > h1):not(:has(.header-banner)) .container > div[style*="font-size: 3rem"] {
+    display: grid;
+    place-items: center;
+    width: 84px; height: 84px;
+    margin: 0 auto 22px !important;
+    font-size: 2.2rem !important;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .30), rgba(255, 255, 255, .10));
+    border: 1px solid rgba(255, 255, 255, .40);
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(70, 14, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .45);
+}
 
-    position: absolute;
-
-    left: 0;
-    top: 0;
-    bottom: 0;
-
-    width: 50%;
-
-    padding:
-        150px 55px 50px;
-
+body:has(.container > h1):not(:has(.header-banner)) h1 {
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    text-shadow: 0 2px 18px rgba(70, 14, 0, .28);
+}
+body:has(.container > h1):not(:has(.header-banner)) h1::before {
+    content: "University Attendance Platform";
     display: block;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .82);
+    margin-bottom: 14px;
+    text-shadow: none;
+}
 
-    color: #ffffff;
+body:has(.container > h1):not(:has(.header-banner)) .container > p {
+    color: rgba(255, 255, 255, .95) !important;
+    font-size: 1.08rem !important;
+    font-weight: 600;
+    margin-bottom: 30px !important;
+}
+body:has(.container > h1):not(:has(.header-banner)) .container > p::after {
+    content: "Create classes, start timed attendance sessions with a one-time code, verify student location, and track every check-in in one place.";
+    display: block;
+    max-width: 46ch;
+    margin: 12px auto 0;
+    font-size: .96rem;
+    font-weight: 400;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, .86);
+}
 
-    font-size: 17px;
+body:has(.container > h1):not(:has(.header-banner)) .container > div:not([style]) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
 
+body:has(.container > h1):not(:has(.header-banner)) .container::after {
+    content: "One-time class codes  •  Location verification  •  Live attendance sheets";
+    display: block;
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, .22);
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .04em;
     line-height: 1.8;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(82, 0, 102, 0.95),
-            rgba(42, 0, 60, 0.90)
-        );
-
-    border-right:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    text-shadow:
-        0 2px 20px rgba(0, 0, 0, 0.25);
-} */
-
-
-/* Decorative shapes on login */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::after {
-    content: "";
-
-    position: absolute;
-
-    width: 330px;
-    height: 330px;
-
-    border-radius: 50%;
-
-    border:
-        2px solid rgba(192, 132, 252, 0.13);
-
-    left: -150px;
-    bottom: -120px;
-
-    box-shadow:
-        100px -80px 0 -30px rgba(236, 72, 153, 0.05),
-        160px -150px 0 -70px rgba(192, 132, 252, 0.08);
-
-    pointer-events: none;
+    color: rgba(255, 255, 255, .82);
 }
 
 
-/* Login heading */
+/* ---------- Buttons on orange pages ---------- */
 
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container > h2 {
-    font-size: 2rem;
+/* primary = white with burnt-orange text */
+body:has(#password) .btn,
+body:has(.container > h1):not(:has(.header-banner)) .btn {
+    color: var(--brand-700);
+    background: #fff;
+    border: 1px solid #fff;
+    min-height: 52px;
+    padding: 13px 28px;
+    margin: 0;
+    font-size: .98rem;
+    font-weight: 750;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(70, 14, 0, .30);
+}
+body:has(#password) .btn:hover,
+body:has(.container > h1):not(:has(.header-banner)) .btn:hover {
+    color: var(--brand-800);
+    background: #FFF4EC;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(70, 14, 0, .38);
+}
 
-    color: #ffffff;
+/* secondary (landing "Create Account") = glass outline */
+body:has(.container > h1):not(:has(.header-banner)) .btn-secondary {
+    color: #fff;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .55);
+    box-shadow: none;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+body:has(.container > h1):not(:has(.header-banner)) .btn-secondary:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .24);
+    border-color: #fff;
+}
 
+
+/* ---------- LOGIN + REGISTER ---------- */
+
+/* Brand header at the top of the card */
+body:has(#password) .container::before {
+    content: "ATTENDANCE SYSTEM";
+    display: block;
+    text-align: center;
+    padding: 58px 0 22px;
+    margin-bottom: 26px;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .3em;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, .22);
+    background:
+        radial-gradient(circle, #fff 0 5px, transparent 5.5px),
+        radial-gradient(circle, rgba(255, 255, 255, .16) 0 17px, rgba(255, 255, 255, .75) 17.5px 19px, transparent 19.5px);
+    background-size: 44px 44px, 44px 44px;
+    background-position: top center, top center;
+    background-repeat: no-repeat;
+}
+
+body:has(#password) h2 {
+    text-align: center;
+    font-size: 1.9rem;
+    font-weight: 800;
     margin-bottom: 28px;
+}
+body:has(#password) h2::before {
+    content: "Welcome back";
+    display: block;
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .78);
+    margin-bottom: 8px;
+}
+body:has(#password) h2::after {
+    content: "Sign in to manage your classes and attendance.";
+    display: block;
+    margin-top: 8px;
+    font-size: .93rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: rgba(255, 255, 255, .84);
+}
+body:has(#matric_number) h2::before { content: "Get started"; }
+body:has(#matric_number) h2::after  { content: "Join with your name, matric or staff number and email."; }
 
-    text-align: left;
+/* labels */
+body:has(#password) label {
+    color: rgba(255, 255, 255, .94);
+    font-size: .82rem;
+    letter-spacing: .02em;
+}
+
+/* inputs: crisp white fields for maximum legibility on the glass */
+body:has(#password) input[type="text"],
+body:has(#password) input[type="email"],
+body:has(#password) input[type="password"] {
+    min-height: 52px;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(70, 14, 0, .12);
+}
+body:has(#password) input:focus {
+    background: #fff;
+    border-color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .35), 0 4px 14px rgba(70, 14, 0, .18);
+}
+body:has(#password) input::placeholder { color: #A5988E; }
+
+body:has(#password) .btn { margin-top: 14px; }
+
+/* divider + footer link */
+body:has(#password) hr {
+    border-top-color: rgba(255, 255, 255, .24);
+    margin: 28px 0 20px;
+}
+body:has(#password) .container > p {
+    text-align: center;
+    margin: 0;
+    font-size: .93rem;
+    color: rgba(255, 255, 255, .88) !important;
+}
+body:has(#password) .container > p a {
+    color: #fff !important;
+    font-weight: 750 !important;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, .5);
+    text-underline-offset: 4px;
+}
+body:has(#password) .container > p a:hover { text-decoration-color: #fff; }
+
+/* error message on the glass card */
+body:has(#password) .alert-danger {
+    color: #fff;
+    background: rgba(100, 12, 8, .42);
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-left: 4px solid #FFB4A2;
+    font-weight: 600;
+}
+
+body:has(#password) :focus-visible,
+body:has(.container > h1):not(:has(.header-banner)) :focus-visible {
+    outline: 3px solid rgba(255, 255, 255, .75);
+    outline-offset: 3px;
 }
 
 
-/* Login form */
+/* ---------- Footer links (landing / login / register) ---------- */
 
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container form {
-    position: relative;
-
-    z-index: 5;
+.site-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 0;
+    margin-top: 22px;
+    font-size: .8rem;
+    letter-spacing: .03em;
+    animation: fadeIn .8s var(--ease) .3s both;
 }
-
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container .form-group {
-    margin-bottom: 22px;
+.site-links a {
+    color: rgba(255, 255, 255, .82);
+    text-decoration: none;
+    padding: 4px 4px;
+    transition: color .2s var(--ease);
 }
-
-
-/* Login inputs */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #email,
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #password {
-    border-radius: 25px;
-
-    height: 50px;
-
-    background:
-        rgba(255, 255, 255, 0.10);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.08);
-}
-
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #email:focus,
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) #password:focus {
-    border-color:
-        rgba(244, 114, 182, 0.75);
-}
-
-
-/* Login labels */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) label {
-    font-size: 0.78rem;
-
-    color:
-        rgba(255, 255, 255, 0.70);
-}
-
-
-/* Login button */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .btn {
-    width: 100% !important;
-
-    height: 50px;
-
-    border-radius: 25px;
-
-    margin-top: 10px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ff9a3d,
-            #ff4d69,
-            #ec4899
-        );
-
-    box-shadow:
-        0 10px 28px rgba(236, 72, 153, 0.25);
-}
-
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .btn:hover {
-    background:
-        linear-gradient(
-            90deg,
-            #ffab55,
-            #ff5270,
-            #f05ba5
-        );
-
-    transform:
-        translateY(-2px);
-}
-
-
-/* Login divider */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) hr {
-    margin:
-        28px 0 18px;
-}
-
-
-/* Login register link */
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) a {
-    color:
-        #f472b6 !important;
-
+.site-links a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+.site-links a + a::before {
+    content: "\2022";
+    display: inline-block;
+    margin: 0 10px 0 6px;
+    color: rgba(255, 255, 255, .45);
     text-decoration: none;
 }
+.site-links a:focus-visible { outline: 2px solid rgba(255, 255, 255, .8); outline-offset: 3px; border-radius: 4px; }
 
-
-body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) a:hover {
-    color: #ffffff !important;
+@media (max-width: 640px) {
+    .site-links { margin-top: 18px; font-size: .78rem; }
+    .site-links a + a::before { margin: 0 6px 0 2px; }
 }
 
 
 /* =========================================================
-   REGISTER PAGE
+   20b. INFO PAGE  (about.html — About / How It Works /
+        About Me / FAQ). Detected by <body> having a <main>.
    ========================================================= */
 
-body:has(.btn-success):has(#matric_number) .container {
-    max-width: 520px !important;
+body:has(> main) { padding: 0; }
 
+/* ---- top navigation ---- */
+body:has(> main) > header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, .88);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+}
+body:has(> main) > header nav {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 20px;
+}
+body:has(> main) > header nav > a {
+    flex: none;
+    padding-left: 26px;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--brand-700);
     background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.09),
-            rgba(255, 255, 255, 0.035)
-        );
+        radial-gradient(circle at 10px 50%, var(--brand-600) 0 5px, transparent 5.5px),
+        radial-gradient(circle at 10px 50%, rgba(194, 65, 12, .18) 0 9px, transparent 9.5px);
+    background-repeat: no-repeat;
 }
-
-
-body:has(.btn-success):has(#matric_number) h2 {
-    font-size: 2rem;
-
-    margin-bottom: 25px;
+body:has(> main) > header nav > div {
+    display: flex;
+    align-items: center;
+    gap: 2px;
 }
-
-
-body:has(.btn-success):has(#matric_number) .btn-success {
-    height: 48px;
-
-    border-radius: 25px;
+body:has(> main) > header nav > div a {
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: .87rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--text-muted);
 }
-
-
-/* =========================================================
-   INLINE STYLE OVERRIDES
-   ========================================================= */
-
-/* Make common inline text colors fit dark theme */
-
-.container [style*="color: var(--text-muted)"] {
-    color: var(--text-muted) !important;
+body:has(> main) > header nav > div a:hover { background: var(--brand-50); color: var(--brand-700); }
+body:has(> main) > header nav > div a:nth-last-child(2) {
+    margin-left: 10px;
+    border: 1px solid var(--line-strong);
+    color: var(--brand-700);
+    background: #fff;
 }
+body:has(> main) > header nav > div a:last-child {
+    color: #fff;
+    background: var(--brand-gradient);
+    box-shadow: 0 4px 12px rgba(181, 58, 14, .25);
+}
+body:has(> main) > header nav > div a:last-child:hover { color: #fff; background: var(--brand-gradient-hover); }
 
+/* ---- page layout ---- */
+body:has(> main) > main {
+    width: min(900px, 100%);
+    margin: 0 auto;
+    padding: 28px 20px 56px;
+    display: grid;
+    gap: 22px;
+}
+body:has(> main) > main > section { animation: rise .6s var(--ease) both; }
+body:has(> main) > main > section:nth-child(2) { animation-delay: .06s; }
+body:has(> main) > main > section:nth-child(3) { animation-delay: .12s; }
 
-/* Override light gray inline backgrounds */
-
-.container [style*="background: #edf2f7"],
-.container [style*="background:#edf2f7"] {
+/* ---- hero (intro) ---- */
+body:has(> main) #intro {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    color: #fff;
+    padding: 60px 44px 56px;
+    border-radius: 28px;
+    box-shadow: var(--shadow-lg);
     background:
-        rgba(168, 85, 247, 0.12) !important;
+        radial-gradient(520px 320px at 8% 0%,   rgba(255, 196, 140, .50), transparent 65%),
+        radial-gradient(480px 360px at 100% 100%, rgba(120, 22, 6, .55), transparent 65%),
+        linear-gradient(135deg, #D4561A 0%, #B73B0F 50%, #8A2209 100%);
+}
+body:has(> main) #intro::before {
+    content: "";
+    position: absolute;
+    width: 360px; height: 360px;
+    right: -120px; top: -140px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .18);
+    box-shadow: 0 0 0 50px rgba(255, 255, 255, .035);
+    pointer-events: none;
+}
+body:has(> main) #intro h1 {
+    position: relative;
+    color: #fff;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 18px rgba(70, 14, 0, .28);
+}
+body:has(> main) #intro h1::before {
+    content: "Digital classroom attendance";
+    display: block;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .85);
+    margin-bottom: 14px;
+    text-shadow: none;
+}
+body:has(> main) #intro p {
+    position: relative;
+    max-width: 58ch;
+    margin: 0 auto 12px;
+    color: rgba(255, 255, 255, .9);
+    font-size: 1.02rem;
+    line-height: 1.7;
+}
+body:has(> main) #intro p:first-of-type { font-size: 1.15rem; font-weight: 500; color: #fff; }
+body:has(> main) #intro p:last-child { margin-bottom: 0; }
 
-    color:
-        #d8b4fe !important;
+/* ---- content sections = white cards ---- */
+body:has(> main) > main > section:not(#intro) {
+    scroll-margin-top: 84px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow-sm);
+    padding: 38px 42px 36px;
+}
+body:has(> main) main h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin: 0 0 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+}
+body:has(> main) main h2::before {
+    content: "";
+    flex: none;
+    width: 5px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--brand-gradient);
+}
+body:has(> main) main h3 {
+    font-size: 1.08rem;
+    font-weight: 750;
+    margin: 28px 0 10px;
+}
+body:has(> main) main section:not(#intro) p {
+    color: #4B433D;
+    line-height: 1.78;
+    margin-bottom: 12px;
+}
+
+/* ---- lists ---- */
+body:has(> main) main ul {
+    list-style: none;
+    display: grid;
+    gap: 9px;
+    margin: 8px 0 16px;
+    padding: 0;
+}
+body:has(> main) main li {
+    position: relative;
+    padding-left: 30px;
+    line-height: 1.6;
+    color: #4B433D;
+}
+body:has(> main) main li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0; top: 2px;
+    width: 19px; height: 19px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: .68rem;
+    font-weight: 800;
+    color: var(--brand-600);
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+}
+/* feature list: two columns on wide screens */
+body:has(> main) #about ul:first-of-type { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px 24px; }
+/* technology lists: chips */
+body:has(> main) #about ul:last-of-type,
+body:has(> main) #about-me ul { display: flex; flex-wrap: wrap; gap: 8px; }
+body:has(> main) #about ul:last-of-type li,
+body:has(> main) #about-me ul li {
+    padding: 6px 15px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--brand-800);
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+    border-radius: 999px;
+}
+body:has(> main) #about ul:last-of-type li::before,
+body:has(> main) #about-me ul li::before { display: none; }
+
+/* ---- How it works: steps ---- */
+body:has(> main) #how-it-works h3 {
+    margin: 32px 0 12px;
+    padding: 11px 16px;
+    font-size: 1.05rem;
+    background: var(--brand-50);
+    border: 1px solid var(--brand-100);
+    border-left: 4px solid var(--brand-600);
+    border-radius: 12px;
+}
+body:has(> main) #how-it-works > h3:first-of-type { margin-top: 26px; }
+/* last heading = "What happens when attendance fails?" */
+body:has(> main) #how-it-works h3:last-of-type {
+    color: #7F1D1D;
+    background: var(--danger-bg);
+    border-color: #FECACA;
+    border-left-color: #DC2626;
+}
+body:has(> main) #how-it-works h3:last-of-type ~ ul li::before {
+    content: "\2715";
+    color: #B91C1C;
+    background: #FEE2E2;
+    border-color: #F6BDBD;
+}
+
+/* ---- About me ---- */
+body:has(> main) #about-me h3:first-of-type {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 6px;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+}
+body:has(> main) #about-me h3:first-of-type::before {
+    content: "MA";
+    flex: none;
+    width: 58px; height: 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: #fff;
+    background: var(--brand-gradient);
+    box-shadow: 0 8px 20px rgba(181, 58, 14, .28);
+}
+body:has(> main) #about-me h3:not(:first-of-type) { margin-top: 26px; }
+
+/* ---- FAQ: each question + answer pair reads as one card ---- */
+body:has(> main) #faq h3 {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 14px 0 0;
+    padding: 16px 20px 6px;
+    font-size: 1.02rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+}
+body:has(> main) #faq h3::before {
+    content: "Q";
+    flex: none;
+    width: 24px; height: 24px;
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+    border-radius: 8px;
+    font-size: .72rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--brand-gradient);
+}
+body:has(> main) #faq h2 + h3 { margin-top: 22px; }
+body:has(> main) #faq h3 + p {
+    margin: 0 !important;
+    padding: 2px 20px 18px 56px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+}
+
+/* ---- footer ---- */
+body:has(> main) > footer {
+    text-align: center;
+    padding: 38px 20px 42px;
+    color: rgba(255, 255, 255, .85);
+    background:
+        radial-gradient(500px 200px at 20% 0%, rgba(255, 196, 140, .25), transparent 70%),
+        linear-gradient(135deg, #B73B0F, #8A2209);
+}
+body:has(> main) > footer p { margin: 0; font-size: .88rem; }
+body:has(> main) > footer p:first-child {
+    margin-bottom: 4px;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+/* ---- info page responsive ---- */
+@media (max-width: 720px) {
+    body:has(> main) > header nav { flex-wrap: wrap; padding: 10px 14px; }
+    body:has(> main) > header nav > div {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    body:has(> main) > header nav > div a { padding: 7px 11px; font-size: .84rem; }
+    body:has(> main) > header nav > div a:nth-last-child(2) { margin-left: 0; }
+    body:has(> main) > main { padding: 16px 12px 40px; gap: 16px; }
+    body:has(> main) #intro { padding: 44px 22px 40px; border-radius: 22px; }
+    body:has(> main) > main > section:not(#intro) { padding: 26px 20px 24px; border-radius: 20px; scroll-margin-top: 110px; }
+    body:has(> main) main h2 { font-size: 1.4rem; }
+    body:has(> main) #faq h3 { padding: 14px 16px 4px; }
+    body:has(> main) #faq h3 + p { padding: 2px 16px 16px 16px; }
+    body:has(> main) #how-it-works h3 { padding: 10px 14px; }
 }
 
 
 /* =========================================================
-   MOBILE
+   21. CLASS NOT FOUND
    ========================================================= */
 
-@media (max-width: 800px) {
-
-    body {
-        padding: 20px 12px;
-    }
-
-    .container {
-        padding: 25px 20px;
-
-        border-radius: 17px;
-    }
-
-    h1 {
-        font-size: 1.7rem;
-    }
-
-    h2 {
-        font-size: 1.4rem;
-    }
-
-    .header-banner {
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-    .btn {
-        width: 100%;
-
-        margin-right: 0;
-    }
-
-
-    /* Login mobile */
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) {
-        padding: 12px;
-
-        align-items: center;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
-        width: 100%;
-
-        min-height: auto;
-
-        padding:
-            300px 25px 35px;
-
-        max-width: none !important;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
-        width: 100%;
-
-        height: 270px;
-
-        bottom: auto;
-
-        padding:
-            55px 30px;
-
-        border-right: none;
-
-        border-bottom:
-            1px solid rgba(255, 255, 255, 0.08);
-
-        font-size: 15px;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::after {
-        width: 200px;
-
-        height: 200px;
-
-        left: -90px;
-
-        bottom: auto;
-
-        top: 80px;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container > h2 {
-        font-size: 1.7rem;
-    }
-
-
-    .timer-code {
-        font-size: 2rem;
-
-        letter-spacing: 4px;
-    }
-
-
-    .timer-clock {
-        font-size: 1.2rem;
-    }
-
-
-    th,
-    td {
-        padding: 10px 12px;
-    }
-}
-
-
-@media (max-width: 480px) {
-
-    body {
-        padding: 10px;
-    }
-
-
-    .container {
-        padding: 22px 17px;
-    }
-
-
-    .card {
-        padding: 16px;
-    }
-
-
-    .timer-box {
-        padding: 25px 15px;
-    }
-
-
-    .timer-code {
-        font-size: 1.65rem;
-
-        letter-spacing: 3px;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container {
-        padding:
-            280px 20px 30px;
-    }
-
-
-    body:has(.container > h2):has(#email):has(#password):not(:has(.btn-success)) .container::before {
-        height: 250px;
-
-        padding:
-            45px 25px;
-
-        font-size: 14px;
-    }
+.container[style*="text-align:center"] .alert-danger {
+    justify-content: center;
+    text-align: center;
 }
 
 
 /* =========================================================
-   ACCESSIBILITY
+   22. ACCESSIBILITY
    ========================================================= */
 
 button:focus-visible,
@@ -1490,20 +1870,111 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline:
-        2px solid #c084fc;
-
-    outline-offset: 3px;
+    outline: 3px solid rgba(194, 65, 12, .35);
+    outline-offset: 2px;
 }
 
 
 /* =========================================================
-   SELECTION
+   23. RESPONSIVE
    ========================================================= */
 
-::selection {
-    background:
-        rgba(168, 85, 247, 0.45);
+/* ---- Tablet ---- */
+@media (max-width: 860px) {
 
-    color: #ffffff;
+    .container > div[style*="align-items: flex-start"] { padding: 24px 22px; }
+
+    .container[style*="max-width"] { padding: 28px 24px; }
+    .container[style*="max-width"] > .header-banner {
+        margin: -28px -24px 24px;
+        padding: 14px 24px;
+    }
+}
+
+/* ---- Phone (landscape / large) ---- */
+@media (max-width: 640px) {
+
+    body { padding: 12px 12px 48px; font-size: 15.5px; }
+
+    h1 { font-size: 1.65rem; }
+    h2 { font-size: 1.35rem; }
+
+    /* nav: brand + logout on row 1, user info on row 2 */
+    .header-banner {
+        justify-content: space-between;
+        top: 8px;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+    }
+    .header-banner::before { margin-right: 0; letter-spacing: .14em; font-size: .74rem; }
+    .header-banner > div:last-child  { order: 1; }
+    .header-banner > div:first-child { order: 2; flex-basis: 100%; font-size: .82rem; }
+
+    .container[style*="max-width"] > .header-banner { padding: 12px 18px; }
+
+    /* buttons go full width for easy tapping … */
+    .btn { width: 100%; margin-right: 0; }
+    /* … except nav pill + table buttons */
+    .header-banner a, td .btn { width: auto; }
+
+    .container > div[style*="margin-bottom: 25px"] > .btn,
+    .container > div[style*="margin-bottom: 25px"] > form { width: 100%; }
+    .container > div[style*="margin-bottom: 25px"] > form .btn { width: 100%; }
+
+    .container > div[style*="align-items: flex-start"] {
+        padding: 22px 18px;
+        border-radius: 18px;
+    }
+
+    .card { padding: 16px 16px; }
+    .announcement-footer .btn { width: auto; }
+    .container > .card:not([style]) { padding-left: 22px; }
+
+    th, td { padding: 11px 13px; }
+
+    .alert-success[style*="margin-bottom:15px"] { padding: 16px; }
+    .alert-success[style*="margin-bottom:15px"] div[style*="letter-spacing:6px"] {
+        letter-spacing: .16em !important;
+        padding: 8px 10px 8px 18px;
+    }
+
+    .timer-box { padding: 28px 14px 22px; border-radius: 20px; }
+    .timer-code { letter-spacing: .16em; padding: 10px 10px 10px 20px; }
+
+    body:has(#attendance-form) #code { font-size: 1.4rem !important; letter-spacing: .2em !important; }
+
+    /* orange pages */
+    body:has(#password),
+    body:has(.container > h1):not(:has(.header-banner)) { padding: 18px 14px; }
+
+    body:has(#password) .container {
+        padding: 30px 22px 28px;
+        border-radius: 24px;
+    }
+    body:has(#password) h2 { font-size: 1.6rem; }
+
+    body:has(.container > h1):not(:has(.header-banner)) .container {
+        padding: 40px 22px 30px !important;
+        border-radius: 24px;
+    }
+    body:has(.container > h1):not(:has(.header-banner)) .container > div:not([style]) { flex-direction: column; }
+    body:has(.container > h1):not(:has(.header-banner)) .container::after { font-size: .72rem; }
+}
+
+/* ---- Small phones ---- */
+@media (max-width: 380px) {
+
+    .header-banner::before { letter-spacing: .08em; }
+    .container[style*="max-width"] { padding: 22px 16px; }
+    .container[style*="max-width"] > .header-banner {
+        margin: -22px -16px 20px;
+        padding: 12px 16px;
+    }
+    .timer-code { font-size: 1.7rem; letter-spacing: .1em; }
+}
+
+/* ---- Short landscape phones: don't vertically-center tall cards ---- */
+@media (max-height: 560px) {
+    body:has(#password),
+    body:has(.container > h1):not(:has(.header-banner)) { justify-content: flex-start; }
 }
